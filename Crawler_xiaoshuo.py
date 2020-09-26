@@ -88,7 +88,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     for i in range(len(html_str)):#遍历章节
         ii=i
         paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
-        
+
 def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i):
     writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
     chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
@@ -352,3 +352,5 @@ while True:
 #url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
 #已完成的章节名
 #书籍连载情况
+
+
