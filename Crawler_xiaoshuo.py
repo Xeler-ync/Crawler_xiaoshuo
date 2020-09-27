@@ -2,6 +2,7 @@ import re
 import requests
 import os
 import sys
+from urllib import parse
 
 def writejianjie(contents,filePath):
     with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
@@ -141,6 +142,19 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
 def getKeyWord():
     ipt=input('Please enter KeyWords: ')
     return ipt
+
+def padingdianSearchPage(keyword):#未完成
+    keyword=parse.quote_plus(keyword)      #https://so.biqusoso.com/s1.php?siteid=booktxt.net&q=%B3%AC%C9%F1
+    searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+keyword).content.decode('utf-8')#请求搜索数据
+    searchHtmlResult=searchHtmlResult.replace('\t\t\t\t','')#除去不明所以的四个'\t'
+    searchBookNames=re.findall('title="(.*?)" class="result-game-item-title-link" target="_blank">\r\n',searchHtmlResult,re.S)#正则抓取书名
+    searchtezheng=re.findall('<a cpos="title" href="https://www.xsbiquge.com/(.*?)/"',searchHtmlResult,re.S)#正则抓取网址
+    searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
+    searchAuther=re.findall('<span class="result-game-item-info-tag-title preBold">作者: </span>\r\n                        <span>\r\n                            (.*?)\r\n',searchHtmlResult,re.S)#正则抓取作者
+    for i in range(len(searchtezheng)):#遍历输出结果
+        print(str(i)+' '+searchBookNames[i])
+    print("Note: due to unknown reasons, we can't get all the results of xsbiquge.com's search interface")
+    return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
 def padingdianzhuye(xiaoshuohao):#booktxt.net
     url='https://www.booktxt.net/'+xiaoshuohao+'/'
@@ -314,6 +328,8 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                     print('Completed: '+str(i)+' '+chapterName[0])
 
+#www.iqishu.la
+#http://www.iqishu.la/search.html?searchkey=q
 
 while True:
     keyWord=getKeyWord()
