@@ -1,9 +1,10 @@
 import re
 import requests
 import os
+import sys
 
 def writejianjie(contents,filePath):
-    with open(os.getcwd()+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
+    with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
         ff.write(contents)
     return
 
@@ -78,7 +79,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入作者
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入简介
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入获取的章节数
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
         f.write('')#创建总文件
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入书名至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入作者至总文件
@@ -131,7 +132,7 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
                 text[0]=text[0].replace('&nbsp;','')#去除无用html标签
                 text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
                 text[0]=text[0].replace('<br />','\n')#处理换行
-                with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+                with open(sys.path[0]+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
                     f.write(str(i)+' '+text[0])#写入正文与节号至分文件
                 writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
                 writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
@@ -165,7 +166,7 @@ def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuo
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
         f.write('')
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
@@ -210,7 +211,7 @@ def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuo
             text[0]=text[0].replace('&nbsp;','')#去除无用html标签
             text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
             text[0]=text[0].replace('<br />','').replace('\r\r','\r')#处理换行
-            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#写入单章文件
+            with open(sys.path[0]+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#写入单章文件
                 f.write(text[0])
             writejianjie(chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名至总文件
             writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
@@ -258,7 +259,7 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入作者
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入简介
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入获取的章节数
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
         f.write('')#创建总文件
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入书名至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入作者至总文件
@@ -307,7 +308,7 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     text[0]=text[0].replace('&nbsp;','')#去除无用html标签
                     text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
                     text[0]=text[0].replace('<br />','\n')#处理换行
-                    with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+                    with open(sys.path[0]+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
                         f.write(str(i)+' '+text[0])#写入正文与节号至分文件
                     writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
