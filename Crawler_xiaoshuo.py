@@ -144,13 +144,17 @@ def getKeyWord():
     return ipt
 
 def padingdianSearchPage(keyword):#未完成
-    keyword=keyword.encode('gbk')      #https://so.biqusoso.com/s1.php?siteid=booktxt.net&q=%B3%AC%C9%F1
+    keyword=keyword.encode('gbk')
+    keyword=str(keyword).replace('\\x','%').replace("b'",'').replace("'",'')
     searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+str(keyword)).content.decode('utf-8')#请求搜索数据
-    #searchHtmlResult=searchHtmlResult.replace('\t\t\t\t','')#除去不明所以的四个'\t'
     searchBookNames=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/.[0-9]+" target="_blank">(.*?)</a></span>',searchHtmlResult,re.S)#正则抓取书名
     searchtezheng=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/(.[0-9]+)" target="_blank">.*?</a></span>',searchHtmlResult,re.S)#正则抓取网址
-    searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
-    searchAuther=re.findall('<span class="s4">(.*?)</span>',searchHtmlResult,re.S)#正则抓取作者
+    for i in range (len(searchtezheng)):#为不存在的简介填充
+        searchtezheng[i]=searchtezheng[i][0]+'_'+searchtezheng[i]
+    searchIntroduce=[0 for i in range(len(searchBookNames))]
+    for i in range(len(searchBookNames)):#处理特征以使之能被直接与URL组合
+        searchIntroduce[i]=''
+    searchAuther=re.findall('<span class="s4">(.[^<>]+)</span>',searchHtmlResult,re.S)#正则抓取作者
     for i in range(len(searchtezheng)):#遍历输出结果
         print(str(i)+' '+searchBookNames[i])
     print("Note: booktxt.net will not display a introduction to each book on the search page")
