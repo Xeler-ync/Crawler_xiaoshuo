@@ -144,8 +144,8 @@ def getKeyWord():
     return ipt
 
 def padingdianSearchPage(keyword):#未完成
-    keyword=parse.quote_plus(keyword)      #https://so.biqusoso.com/s1.php?siteid=booktxt.net&q=%B3%AC%C9%F1
-    searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+keyword).content.decode('utf-8')#请求搜索数据
+    keyword=keyword.encode('gbk')      #https://so.biqusoso.com/s1.php?siteid=booktxt.net&q=%B3%AC%C9%F1
+    searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+str(keyword)).content.decode('utf-8')#请求搜索数据
     #searchHtmlResult=searchHtmlResult.replace('\t\t\t\t','')#除去不明所以的四个'\t'
     searchBookNames=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/.[0-9]+" target="_blank">(.*?)</a></span>',searchHtmlResult,re.S)#正则抓取书名
     searchtezheng=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/(.[0-9]+)" target="_blank">.*?</a></span>',searchHtmlResult,re.S)#正则抓取网址
