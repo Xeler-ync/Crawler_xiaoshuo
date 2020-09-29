@@ -139,10 +139,6 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
                 writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                 print('Completed: '+str(i)+' '+chapterName[0])
 
-def getKeyWord():
-    ipt=input('Please enter KeyWords: ')
-    return ipt
-
 def padingdianSearchPage(keyword):#未完成
     keyword=keyword.encode('gbk')
     keyword=str(keyword).replace('\\x','%').replace("b'",'').replace("'",'')
@@ -332,9 +328,15 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                     print('Completed: '+str(i)+' '+chapterName[0])
 
+def getKeyWord():
+    ipt=input('Please enter KeyWords: ')
+    return ipt
+
+def getbooks(keyWord):
+    keyWord=keyWord
+
 #www.iqishu.la
 #http://www.iqishu.la/search.html?searchkey=q
-padingdianSearchPage('超神')
 while True:
     keyWord=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
