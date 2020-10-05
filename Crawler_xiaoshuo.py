@@ -1,6 +1,8 @@
 import re
 import requests
 import os
+import datetime
+import time
 
 def writejianjie(contents,filePath):
     with open(os.getcwd()+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
@@ -66,7 +68,7 @@ def paxsbqgzhuye(xiaoshuohao):#xsbiquge.com
     bookintroduction=re.findall('/>\r\n<meta property="og:description" content="(.*?)"',html,re.S)#正则抓取简介
     return(url,html_str,bookname,bookauther,bookintroduction)
 
-def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
+def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,singleChapterOutPut):
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
@@ -84,11 +86,21 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入作者至总文件
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入简介至总文件
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入获取的章节数至总文件
+    startTime=datetime.datetime.now()
+    print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(html_str)):#遍历章节
         ii=i
-        paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
+        SingleChapterOutPut=singleChapterOutPut
+        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii,SingleChapterOutPut)
+        if success==True:
+            print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
+        else:
+            print('Error: '+chapterName[0])
+    endTime=datetime.datetime.now()
+    deltaTime=(endTime-startTime).seconds
+    print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(html_str))+' seconds per chapter\n')
 
-def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i):
+def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i,singleChapterOutPut):
     writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
     chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
     chapterFeature=re.findall('<dd><a href="/'+xiaoshuohao+'/(.*?).html',html_str[i],re.S)#获取章节URL特征
@@ -100,42 +112,43 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
         writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
         writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入出错章节
         writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-        print('Error: Section'+i)
-    else:
-        chapterName[0]=chapterName[0].replace('/','[斜杠]')#去除斜杠
-        chapterName[0]=chapterName[0].replace(':','[半角冒号]')#去除半角冒号
-        chapterName[0]=chapterName[0].replace('*','[星号]')#去除星号
-        chapterName[0]=chapterName[0].replace('?','[半角问号]')#去除半角问号
-        chapterName[0]=chapterName[0].replace('"','[半角双引号]')#去除半角双引号
-        chapterName[0]=chapterName[0].replace('<','[小于号]')#去除小于号
-        chapterName[0]=chapterName[0].replace('>','[大于号]')#去除大于号
-        chapterName[0]=chapterName[0].replace('|','[竖线]')#去除竖线
-        try:
-            chapter=requests.get(chapterUrl).content.decode('utf-8')#请求数据
-        except:#出错处理
-            writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入源网址
-            writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入总文件
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-            print('Error: '+chapterName[0])
-        text=re.findall('&nbsp;&nbsp;&nbsp;&nbsp;(.*?)</div>',chapter,re.S)#正则抓取正文  #<div id="content">
-        try:
-            text[0]=text[0].replace('<br />&nbsp;','') #去除无用html标签
-        except:#出错处理
-            writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入源网址
-            writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入总文件
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-            print('Error: '+chapterName[0])
-        else :
-                text[0]=text[0].replace('&nbsp;','')#去除无用html标签
-                text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
-                text[0]=text[0].replace('<br />','\n')#处理换行
-                with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
-                    f.write(str(i)+' '+text[0])#写入正文与节号至分文件
-                writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
-                writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
-                print('Completed: '+str(i)+' '+chapterName[0])
+        return False
+    chapterName[0]=chapterName[0].replace('/','[斜杠]')#去除斜杠
+    chapterName[0]=chapterName[0].replace(':','[半角冒号]')#去除半角冒号
+    chapterName[0]=chapterName[0].replace('*','[星号]')#去除星号
+    chapterName[0]=chapterName[0].replace('?','[半角问号]')#去除半角问号
+    chapterName[0]=chapterName[0].replace('"','[半角双引号]')#去除半角双引号
+    chapterName[0]=chapterName[0].replace('<','[小于号]')#去除小于号
+    chapterName[0]=chapterName[0].replace('>','[大于号]')#去除大于号
+    chapterName[0]=chapterName[0].replace('|','[竖线]')#去除竖线
+    try:
+        chapter=requests.get(chapterUrl).content.decode('utf-8')#请求数据
+    except:#出错处理
+        writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入源网址
+        writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入总文件
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
+        return False
+    text=re.findall('&nbsp;&nbsp;&nbsp;&nbsp;(.*?)</div>',chapter,re.S)#正则抓取正文  #<div id="content">
+    try:
+        text[0]=text[0].replace('<br />&nbsp;','') #去除无用html标签
+    except:#出错处理
+        writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入源网址
+        writejianjie('Section '+str(i)+'('+chapterName[0]+')has an error and cannot be obtained''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入总文件
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
+        return False
+    else :
+        text[0]=text[0].replace('&nbsp;','')#去除无用html标签
+        text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
+        text[0]=text[0].replace('<br />','\n')#处理换行
+        if singleChapterOutPut==True:#是否输出单章
+            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+                f.write(str(i)+' '+text[0])#写入正文与节号至分文件
+        writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
+        writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
+        print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
+        return True
 
 def getKeyWord():
     ipt=input('Please enter KeyWords: ')
@@ -153,7 +166,7 @@ def padingdianzhuye(xiaoshuohao):#booktxt.net
     html_str=re.findall('<dd><a href ="[0-9]+.html">.*?</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
     return(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
 
-def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
+def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
@@ -171,50 +184,71 @@ def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuo
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+    startTime=datetime.datetime.now()
+    print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(html_str)):#遍历章节
-        writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
-        chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
-        chapterFeature=re.findall('<a href ="([0-9]+).html">',html_str[i],re.S)#获取章节URL特征
-        chapterUrl='https://www.booktxt.net/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
-        try:                                                                                                #不记得为什么要这么做了
-            chapterName[0]=chapterName[0].replace('\\','[反斜杠]')#去除反斜杠
-        except:#出错处理
-            writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-            writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入出错章节
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-            print('Error: Section'+i)
-            continue
+        ii=i
+        SingleChapterOutPut=singleChapterOutPut
+        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii,SingleChapterOutPut)
+        if success==True:
+            print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
-            chapterName[0]=chapterName[0].replace('/','[斜杠]')#去除斜杠
-            chapterName[0]=chapterName[0].replace(':','[半角冒号]')#去除半角冒号
-            chapterName[0]=chapterName[0].replace('*','[星号]')#去除星号
-            chapterName[0]=chapterName[0].replace('?','[半角问号]')#去除半角问号
-            chapterName[0]=chapterName[0].replace('"','[半角双引号]')#去除半角双引号
-            chapterName[0]=chapterName[0].replace('<','[小于号]')#去除小于号
-            chapterName[0]=chapterName[0].replace('>','[大于号]')#去除大于号
-            chapterName[0]=chapterName[0].replace('|','[竖线]')#去除竖线
-            chapter=requests.get(chapterUrl).content.decode('gbk','ignore')#请求数据，dingdian偶尔会在正常的章节出现莫名其妙的非法字符，只能忽略，但是dingdian似乎只使用gbk所以看起来不会有什么问题
-        try: #如果出错意味着该章节没有内容
-            text=re.findall('<div id="content">(.*?).[0-9!-<>]?<br /><br /><script>chaptererror()',chapter,re.S)#正则抓取正文，未能解决为什么会变为tuple而不是list
-            text[0]=text[0][0]#将元组内容提出并重新为列表赋值
-        except:#输出报告
-            writejianjie('There is no content in section '+str(i)+'('+chapterName[0]+')'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-            writejianjie('There is no content in section '+str(i)+'('+chapterName[0]+')''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-            writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
             print('Error: '+chapterName[0])
-            continue
-        else:
-            text[0]=text[0].replace('\u3000\u3000\u3000\u3000','\u3000\u3000')#替换四重空格
-            text[0]=text[0].replace('&nbsp;','')#去除无用html标签
-            text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
-            text[0]=text[0].replace('<br />','').replace('\r\r','\r')#处理换行
-            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#写入单章文件
-                f.write(text[0])
-            writejianjie(chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名至总文件
-            writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
-            print('Completed: '+chapterName[0])
+    endTime=datetime.datetime.now()
+    deltaTime=(endTime-startTime).seconds
+    print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(html_str))+' seconds per chapter\n')
+
+def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i,singleChapterOutPut):
+    writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
+    chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
+    chapterFeature=re.findall('<a href ="([0-9]+).html">',html_str[i],re.S)#获取章节URL特征
+    chapterUrl='https://www.booktxt.net/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
+    try:                                                                                                #不记得为什么要这么做了
+        chapterName[0]=chapterName[0].replace('\\','[反斜杠]')#去除反斜杠
+    except:#出错处理
+        writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
+        writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入出错章节
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
+        print('Error: Section'+i)
+        return False
+    else:
+        chapterName[0]=chapterName[0].replace('/','[斜杠]')#去除斜杠
+        chapterName[0]=chapterName[0].replace(':','[半角冒号]')#去除半角冒号
+        chapterName[0]=chapterName[0].replace('*','[星号]')#去除星号
+        chapterName[0]=chapterName[0].replace('?','[半角问号]')#去除半角问号
+        chapterName[0]=chapterName[0].replace('"','[半角双引号]')#去除半角双引号
+        chapterName[0]=chapterName[0].replace('<','[小于号]')#去除小于号
+        chapterName[0]=chapterName[0].replace('>','[大于号]')#去除大于号
+        chapterName[0]=chapterName[0].replace('|','[竖线]')#去除竖线
+        while True:
+            try:
+                chapter=requests.get(chapterUrl).content.decode('gbk','ignore')#请求数据，dingdian偶尔会在正常的章节出现莫名其妙的非法字符，只能忽略，但是dingdian似乎只使用gbk所以看起来不会有什么问题
+            except:
+                chapter=''
+            if chapter!='':
+                break
+    try: #如果出错意味着该章节没有内容
+        text=re.findall('<div id="content">(.*?).[0-9!-<>]?<br /><br /><script>chaptererror()',chapter,re.S)#正则抓取正文，未能解决为什么会变为tuple而不是list
+        text[0]=text[0][0]#将元组内容提出并重新为列表赋值
+    except:#输出报告
+        writejianjie('There is no content in section '+str(i)+'('+chapterName[0]+')'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
+        writejianjie('There is no content in section '+str(i)+'('+chapterName[0]+')''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+        print('Error: '+chapterName[0])
+        return False
+    else:
+        text[0]=text[0].replace('\u3000\u3000\u3000\u3000','\u3000\u3000')#替换四重空格
+        text[0]=text[0].replace('&nbsp;','')#去除无用html标签
+        text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
+        text[0]=text[0].replace('<br />','').replace('\r\r','\r')#处理换行
+        if singleChapterOutPut==True:#是否输出单章
+            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+                f.write(str(i)+' '+text[0])#写入正文与节号至分文件
+        writejianjie(chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名至总文件
+        writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
+        return True
 
 def paxswSearchPage(keyword):
     searchHtmlResult=requests.get('https://www.xiashuwu.com/search.html?searchkey='+keyword+'&searchtype=all').content.decode('utf-8')#请求搜索数据
@@ -312,7 +346,6 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                     print('Completed: '+str(i)+' '+chapterName[0])
-
 
 while True:
     keyWord=getKeyWord()
