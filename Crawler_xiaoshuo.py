@@ -3,9 +3,10 @@ import requests
 import os
 import datetime
 import time
+import sys
 
 def writejianjie(contents,filePath):
-    with open(os.getcwd()+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
+    with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
         ff.write(contents)
     return
 
@@ -80,7 +81,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入作者
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入简介
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入获取的章节数
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
         f.write('')#创建总文件
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入书名至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入作者至总文件
@@ -150,9 +151,22 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
         print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         return True
 
-def getKeyWord():
-    ipt=input('Please enter KeyWords: ')
-    return ipt
+def padingdianSearchPage(keyword):#未完成
+    keyword=keyword.encode('gbk')
+    keyword=str(keyword).replace('\\x','%').replace("b'",'').replace("'",'')
+    searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+str(keyword)).content.decode('utf-8')#请求搜索数据
+    searchBookNames=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/.[0-9]+" target="_blank">(.*?)</a></span>',searchHtmlResult,re.S)#正则抓取书名
+    searchtezheng=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/(.[0-9]+)" target="_blank">.*?</a></span>',searchHtmlResult,re.S)#正则抓取网址
+    for i in range (len(searchtezheng)):#为不存在的简介填充
+        searchtezheng[i]=searchtezheng[i][0]+'_'+searchtezheng[i]
+    searchIntroduce=[0 for i in range(len(searchBookNames))]
+    for i in range(len(searchBookNames)):#处理特征以使之能被直接与URL组合
+        searchIntroduce[i]=''
+    searchAuther=re.findall('<span class="s4">(.[^<>]+)</span>',searchHtmlResult,re.S)#正则抓取作者
+    for i in range(len(searchtezheng)):#遍历输出结果
+        print(str(i)+' '+searchBookNames[i])
+    print("Note: booktxt.net will not display a introduction to each book on the search page")
+    return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
 def padingdianzhuye(xiaoshuohao):#booktxt.net
     url='https://www.booktxt.net/'+xiaoshuohao+'/'
@@ -178,7 +192,7 @@ def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
         f.write('')
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
@@ -292,7 +306,7 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
     writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入作者
     writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入简介
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入获取的章节数
-    with open(os.getcwd()+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
         f.write('')#创建总文件
     writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入书名至总文件
     writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入作者至总文件
@@ -341,16 +355,26 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     text[0]=text[0].replace('&nbsp;','')#去除无用html标签
                     text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
                     text[0]=text[0].replace('<br />','\n')#处理换行
-                    with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+                    with open(sys.path[0]+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
                         f.write(str(i)+' '+text[0])#写入正文与节号至分文件
                     writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                     print('Completed: '+str(i)+' '+chapterName[0])
 
+def getKeyWord():
+    ipt=input('Please enter KeyWords: ')
+    return ipt
+
+def getbooks(keyWord):
+    keyWord=keyWord
+
 while True:
     keyWord=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
+
+#www.iqishu.la
+#http://www.iqishu.la/search.html?searchkey=q
 #记录工作进度的文件以支持断点续连
 #url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
 #已完成的章节名
