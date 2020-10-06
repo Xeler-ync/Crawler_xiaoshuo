@@ -69,7 +69,7 @@ def paxsbqgzhuye(xiaoshuohao):#xsbiquge.com
     bookintroduction=re.findall('/>\r\n<meta property="og:description" content="(.*?)"',html,re.S)#正则抓取简介
     return(url,html_str,bookname,bookauther,bookintroduction)
 
-def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,singleChapterOutPut):
+def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
@@ -91,8 +91,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(html_str)):#遍历章节
         ii=i
-        SingleChapterOutPut=singleChapterOutPut
-        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii,SingleChapterOutPut)
+        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
@@ -102,7 +101,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
     deltaTime=(endTime-startTime).seconds
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(html_str))+' seconds per chapter\n')
 
-def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i,singleChapterOutPut):
+def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i):
     writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
     chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
     chapterFeature=re.findall('<dd><a href="/'+xiaoshuohao+'/(.*?).html',html_str[i],re.S)#获取章节URL特征
@@ -181,7 +180,7 @@ def padingdianzhuye(xiaoshuohao):#booktxt.net
     html_str=re.findall('<dd><a href ="[0-9]+.html">.*?</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
     return(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
 
-def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,singleChapterOutPut):#未完成
+def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
@@ -203,8 +202,7 @@ def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(html_str)):#遍历章节
         ii=i
-        SingleChapterOutPut=singleChapterOutPut
-        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii,SingleChapterOutPut)
+        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
@@ -214,7 +212,7 @@ def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction
     deltaTime=(endTime-startTime).seconds
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(html_str))+' seconds per chapter\n')
 
-def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i,singleChapterOutPut):
+def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,i):
     writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
     chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
     chapterFeature=re.findall('<a href ="([0-9]+).html">',html_str[i],re.S)#获取章节URL特征
@@ -365,13 +363,29 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
 
 def getKeyWord():
     ipt=input('Please enter KeyWords: ')
+    if ipt.strip()[0]=='/' and ipt.strip()[1]=='/':
+        changeSettings(ipt.lower())
     return ipt
 
 def getbooks(keyWord):
     keyWord=keyWord
 
+def initialiseSettings():
+    global singleChapterOutPut
+    singleChapterOutPut=False
+
+def changeSettings(ipt):#完成了单章输出的选择
+    if '-h' or '-help' or '-?' in ipt:
+        print('help')
+        print('-scopt t/f\nTo enable/disable single chapter output.')
+    elif '-scopt t' or '-scopt on' or '-scopt 1' in ipt:
+        singleChapterOutPut=True
+    elif '-scopt f' or '-scopt off' or '-scopt 0' in ipt:
+        singleChapterOutPut=False
+
 while True:
-    keyWord=getKeyWord()
+    initialiseSetting()
+    (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
