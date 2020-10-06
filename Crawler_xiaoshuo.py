@@ -14,12 +14,12 @@ def selectBook(bookNames,tezheng,introduce,auther):
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
-        if 'ls' in ipt:#输出结果                            #参数识别
+        if '-ls' or '-list' in ipt:#输出结果                            #参数识别
             for i in range(len(bookNames)):
                print(str(i)+' '+bookNames[i])
-        elif 'bk' in ipt:#返回搜索
+        elif '-bk' or '-back' in ipt:#返回搜索
             return
-        elif 'help' in ipt:#输出可用指令
+        elif 'help' or '-h' or '-?' in ipt:#输出可用指令
             print('ls\n')
             print('List the title of the book\n')
             print('bk\n')
@@ -28,7 +28,7 @@ def selectBook(bookNames,tezheng,introduce,auther):
             print('Show the details of the book\n')
             print('pa <num>\n')
             print('Crawling book\n')
-        elif 'dt' in ipt:#输出书本细节
+        elif 'dt' or '-detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
                 print('Index out of range')
                 if '-d' in ipt:#进入书本主页爬取并输出细节
@@ -362,29 +362,67 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     print('Completed: '+str(i)+' '+chapterName[0])
 
 def getKeyWord():
-    ipt=input('Please enter KeyWords: ')
-    if ipt.strip()[0]=='/' and ipt.strip()[1]=='/':
+    ipt=input('Please enter KeyWords or Commands: ')
+    try:
+        a=ipt.strip()[1]
+    except:
+        return ipt
+    while ipt.strip()[0]=='/' and ipt.strip()[1]=='/':
         changeSettings(ipt.lower())
+        ipt=input('Please enter KeyWords or Commands: ')
     return ipt
+
 
 def getbooks(keyWord):
     keyWord=keyWord
 
-def initialiseSettings():
-    global singleChapterOutPut
-    singleChapterOutPut=False
+def initialiseSettings():#初始化全局变量
+    singleChapterOutPut=False#单章输出
+    supportWebsttesNum=2#支持的网站数
+    enabledWebsite[0]=True#xsbiquge.com
+    enabledWebsite[1]=True#booktxt.net
 
-def changeSettings(ipt):#完成了单章输出的选择
+def changeSettings(ipt):#搜索时可配置的设置
     if '-h' or '-help' or '-?' in ipt:
-        print('help')
+        print('helps:')
         print('-scopt t/f\nTo enable/disable single chapter output.')
-    elif '-scopt t' or '-scopt on' or '-scopt 1' in ipt:
+    elif '-scopt t' or '-scopt on' or '-scopt 1' in ipt:#单章输出的选择
         singleChapterOutPut=True
-    elif '-scopt f' or '-scopt off' or '-scopt 0' in ipt:
+    elif '-scopt f' or '-scopt off' or '-scopt 0' in ipt:#单章输出的选择
         singleChapterOutPut=False
 
+def getBookSearchingResult(ipt):#获取各个网站的搜索结果
+    searchBookNames=[]
+    searchtezheng=[]
+    searchIntroduce=[]
+    searchAuther=[]
+    for websiteNum in range(supportWebsitesNum):
+        if enabledWebsite[websiteNum]:
+            (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
+            for i in range(len(searchBookNames0)):
+                for ii in range(len(searchBookNames)):
+                    if searchbooknames0[i]==searchbooknames[ii]:
+                        searchbooknames0[i]=searchbooknames0[len(searchbooknames0)-1]
+                        searchbooknames0.pop[len(searchbooknames0)-1]
+                        searchtezheng0[i]=searchtezheng0[len(searchtezheng0)-1]
+                        searchtezheng0.pop[len(searchbooknames0)-1]
+                        searchIntroduce0[i]=searchIntroduce0[len(searchIntroduce0)-1]
+                        searchIntroduce0.pop[len(searchbooknames0)-1]
+                        searchAuther0[i]=searchAuther0[len(searchAuther0)-1]
+                        searchAuther0.pop[len(searchbooknames0)-1]
+                        break
+                    searchBookNames.append(searchbooknames0[i])
+                    searchtezheng.append(searchtezheng0[i])
+                    searchIntroduce.append(searchIntroduce0[i])
+                    searchAuther.append(searchAuther0[i])
+    return searchBookNames,searchtezheng,searchIntroduce,searchAuther
+
+singleChapterOutPut=False
+supportWebsitesNum=2
+enabledWebsite=[True]*2
+initialiseSettings()
+getBookSearchingResult('异常')
 while True:
-    initialiseSetting()
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
