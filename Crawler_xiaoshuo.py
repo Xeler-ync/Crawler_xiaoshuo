@@ -96,6 +96,7 @@ def paxsbqgTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xi
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
+            chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
             print('Error: '+chapterName[0])
     endTime=datetime.datetime.now()
     deltaTime=(endTime-startTime).seconds
@@ -180,7 +181,7 @@ def padingdianzhuye(xiaoshuohao):#booktxt.net
     html_str=re.findall('<dd><a href ="[0-9]+.html">.*?</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
     return(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
 
-def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
+def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,singleChapterOutPut):#未完成
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
@@ -207,6 +208,7 @@ def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
+            chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
             print('Error: '+chapterName[0])
     endTime=datetime.datetime.now()
     deltaTime=(endTime-startTime).seconds
