@@ -51,7 +51,7 @@ def paxsbqgSearchPage(keyword):
     searchBookNames=re.findall('title="(.*?)" class="result-game-item-title-link" target="_blank">\r\n',searchHtmlResult,re.S)#正则抓取书名
     searchtezheng=re.findall('<a cpos="title" href="https://www.xsbiquge.com/(.*?)/"',searchHtmlResult,re.S)#正则抓取网址
     searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
-    searchAuther=re.findall('<span class="result-game-item-info-tag-title preBold">作者: </span>\r\n                        <span>\r\n                            (.*?)\r\n',searchHtmlResult,re.S)#正则抓取作者
+    searchAuther=re.findall('<span>\r\n                            (.*?)\r\n                        </span>',searchHtmlResult,re.S)#正则抓取作者
     for i in range(len(searchtezheng)):#遍历输出结果
         print(str(i)+' '+searchBookNames[i])
     print("Note: due to unknown reasons, we can't get all the results of xsbiquge.com's search interface")
@@ -361,17 +361,16 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
                     writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
                     print('Completed: '+str(i)+' '+chapterName[0])
 
-def getKeyWord():
+def getKeyWord():#获取用户输入  #应该有bug
     ipt=input('Please enter KeyWords or Commands: ')
-    try:
+    try:#如果长度小于等于一肯定不是指令
         a=ipt.strip()[1]
     except:
         return ipt
-    while ipt.strip()[0]=='/' and ipt.strip()[1]=='/':
+    while ipt.strip()[0]=='/' and ipt.strip()[1]=='/':#指令识别
         changeSettings(ipt.lower())
         ipt=input('Please enter KeyWords or Commands: ')
     return ipt
-
 
 def getbooks(keyWord):
     keyWord=keyWord
@@ -391,38 +390,32 @@ def changeSettings(ipt):#搜索时可配置的设置
     elif '-scopt f' or '-scopt off' or '-scopt 0' in ipt:#单章输出的选择
         singleChapterOutPut=False
 
-def getBookSearchingResult(ipt):#获取各个网站的搜索结果
-    searchBookNames=[]
+def getBookSearchingResult(ipt):#获取各个网址的搜索结果
+    searchBookNames=[]#初始化变量
     searchtezheng=[]
     searchIntroduce=[]
     searchAuther=[]
-    for websiteNum in range(supportWebsitesNum):
+    for websiteNum in range(supportWebsitesNum):#遍历可用的网站
         if enabledWebsite[websiteNum]:
-            if websiteNum==0:
+            if websiteNum==0:#xsbiquge.com
                 (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
-            elif websiteNum==1:
+            elif websiteNum==1:#booktxt.net
                 (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=padingdianSearchPage(ipt)
-            if len(searchBookNames)==0:
-                searchBookNames==searchBookNames0
-                searchtezheng==searchtezheng0
-                searchIntroduce==searchIntroduce0
-                searchAuther==searchAuther0
-            for i in range(len(searchBookNames0)):
-                for ii in range(len(searchBookNames)):
-                    if searchbooknames0[i]==searchbooknames[ii]:
-                        searchbooknames0[i]=searchbooknames0[len(searchbooknames0)-1]
-                        searchbooknames0.pop[len(searchbooknames0)-1]
-                        searchtezheng0[i]=searchtezheng0[len(searchtezheng0)-1]
-                        searchtezheng0.pop[len(searchbooknames0)-1]
-                        searchIntroduce0[i]=searchIntroduce0[len(searchIntroduce0)-1]
-                        searchIntroduce0.pop[len(searchbooknames0)-1]
-                        searchAuther0[i]=searchAuther0[len(searchAuther0)-1]
-                        searchAuther0.pop[len(searchbooknames0)-1]
-                        break
-                    searchBookNames.append(searchbooknames0[i])
-                    searchtezheng.append(searchtezheng0[i])
-                    searchIntroduce.append(searchIntroduce0[i])
-                    searchAuther.append(searchAuther0[i])
+            if len(searchBookNames)==0:#如果是第一次数据则直接赋值
+                searchBookNames=searchBookNames0
+                searchtezheng=searchtezheng0
+                searchIntroduce=searchIntroduce0
+                searchAuther=searchAuther0
+            else:#二次及以后后需要去重
+                for i in range(len(searchBookNames0)):#在搜索结果与原有结果之间遍历比对
+                    for ii in range(len(searchBookNames)):
+                        if searchBookNames0[i]==searchBookNames0[ii]:#出现重复书名则跳过
+                            break
+                        searchBookNames.append(searchBookNames0[i])#反之则加入至末尾并进行下一个    $这里感觉上要去掉一个缩进，但是不去掉却没问题，去掉就有问题
+                        searchtezheng.append(searchtezheng0[i])
+                        searchIntroduce.append(searchIntroduce0[i])
+                        searchAuther.append(searchAuther0[i])
+                        break#加入后break掉ii的for
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther
 
 singleChapterOutPut=False
