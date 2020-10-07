@@ -398,7 +398,15 @@ def getBookSearchingResult(ipt):#获取各个网站的搜索结果
     searchAuther=[]
     for websiteNum in range(supportWebsitesNum):
         if enabledWebsite[websiteNum]:
-            (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
+            if websiteNum==0:
+                (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
+            elif websiteNum==1:
+                (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=padingdianSearchPage(ipt)
+            if len(searchBookNames)==0:
+                searchBookNames==searchBookNames0
+                searchtezheng==searchtezheng0
+                searchIntroduce==searchIntroduce0
+                searchAuther==searchAuther0
             for i in range(len(searchBookNames0)):
                 for ii in range(len(searchBookNames)):
                     if searchbooknames0[i]==searchbooknames[ii]:
