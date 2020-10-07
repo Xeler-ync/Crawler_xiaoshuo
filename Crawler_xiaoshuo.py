@@ -51,7 +51,7 @@ def paxsbqgSearchPage(keyword):
     searchBookNames=re.findall('title="(.*?)" class="result-game-item-title-link" target="_blank">\r\n',searchHtmlResult,re.S)#正则抓取书名
     searchtezheng=re.findall('<a cpos="title" href="https://www.xsbiquge.com/(.*?)/"',searchHtmlResult,re.S)#正则抓取网址
     searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
-    searchAuther=re.findall('<span class="result-game-item-info-tag-title preBold">作者: </span>\r\n                        <span>\r\n                            (.*?)\r\n',searchHtmlResult,re.S)#正则抓取作者
+    searchAuther=re.findall('<span>\r\n                            (.*?)\r\n                        </span>',searchHtmlResult,re.S)#正则抓取作者
     for i in range(len(searchtezheng)):#遍历输出结果
         print(str(i)+' '+searchBookNames[i])
     print("Note: due to unknown reasons, we can't get all the results of xsbiquge.com's search interface")
