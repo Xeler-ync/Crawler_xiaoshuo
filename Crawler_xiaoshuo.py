@@ -42,7 +42,7 @@ def selectBook(bookNames,tezheng,introduce,auther):
                     print(introduce[num])
         elif 'pa' in ipt:#爬书
             (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-            paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+            paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])],False)
             return
 
 def paxsbqgSearchPage(keyword):
