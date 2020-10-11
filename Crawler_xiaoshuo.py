@@ -14,11 +14,11 @@ def selectBook(bookNames,tezheng,introduce,auther):
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
-        if '-ls' in ipt or '-list' in ipt:#输出结果                            #参数识别
+        if 'ls' in ipt or 'list' in ipt:#输出结果                            #参数识别
             for i in range(len(bookNames)):
                print(str(i)+' '+bookNames[i])
-        elif '-bk' in ipt or '-back' in ipt:#返回搜索
-            return
+        #elif 'bk' in ipt or 'back' in ipt:#返回搜索
+            #return
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
             print('ls\n')
             print('List the title of the book\n')
@@ -26,25 +26,36 @@ def selectBook(bookNames,tezheng,introduce,auther):
             print('Return to search\n')
             print('dt <num>\n')
             print('Show the details of the book\n')
+            print('helps:')
+            print('-scopt t/f\nTo enable/disable single chapter output.')
             print('pa <num>\n')
             print('Crawling book\n')
-        elif 'dt' in ipt or '-detail' in ipt:#输出书本细节
+        elif 'dt' in ipt or 'detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
                 print('Index out of range')
-                if '-d' in ipt:#进入书本主页爬取并输出细节
+            if '-d' in ipt:#进入书本主页爬取并输出细节
+                if searchsite[int(num[0])]==0:#xsbiquge.com
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-                    print('Title: 《'+zhuyebookname[0]+'》')
-                    print('Auther: '+zhuyebookauther[0])
-                    print(zhuyebookintroduction[0])
-                else:#直接输出细节
-                    print('Title: 《'+bookNames[num]+'》')
-                    print('Auther: '+auther[num])
-                    print(introduce[num])
+                elif searchsite[int(num[0])]==1:#booktxt.netm
+                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
+                print('Title: 《'+zhuyebookname[0]+'》')
+                print('Auther: '+zhuyebookauther[0])
+                print(zhuyebookintroduction[0])
+            else:#直接输出细节
+                print('Title: 《'+bookNames[num]+'》')
+                print('Auther: '+auther[num])
+                print(introduce[num])
+        elif 'scopt' in ipt:#单章输出的选择
+            ipt=ipt.replace('scopt','')
+            if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
+                singleChapterOutPut=True
+            elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
+                singleChapterOutPut=False
         elif 'pa' in ipt:#爬书
-            if searchsite[int(num[0])]==0:
+            if searchsite[int(num[0])]==0:#xsbiquge.com
                 (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
                 paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-            elif searchsite[int(num[0])]==1:
+            elif searchsite[int(num[0])]==1:#booktxt.net
                 (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
                 padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
             return
@@ -385,13 +396,15 @@ def initialiseSettings():#初始化全局变量
     enabledWebsite[1]=True#booktxt.net
 
 def changeSettings(ipt):#搜索时可配置的设置
-    if '-h' or '-help' or '-?' in ipt:
+    if '-h'in ipt or '-help'in ipt or '-?' in ipt:
         print('helps:')
         print('-scopt t/f\nTo enable/disable single chapter output.')
-    elif '-scopt t' or '-scopt on' or '-scopt 1' in ipt:#单章输出的选择
-        singleChapterOutPut=True
-    elif '-scopt f' or '-scopt off' or '-scopt 0' in ipt:#单章输出的选择
-        singleChapterOutPut=False
+    elif 'scopt' in ipt:#单章输出的选择
+        ipt=ipt.replace('scopt','')
+        if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
+            singleChapterOutPut=True
+        elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
+            singleChapterOutPut=False
 
 def getBookSearchingResult(ipt):#获取各个网址的搜索结果
     searchBookNames=[]#初始化变量
@@ -435,6 +448,8 @@ initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
+    for i in range(len(searchBookNames)):#遍历输出结果
+        print(str(i)+' '+searchBookNames[i])
     #(searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
