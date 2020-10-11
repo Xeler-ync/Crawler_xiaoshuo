@@ -364,7 +364,7 @@ def paxswChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
 def getKeyWord():#获取用户输入  #应该有bug
     ipt=input('Please enter KeyWords or Commands: ')
     try:#如果长度小于等于一肯定不是指令
-        a=ipt.strip()[1]
+        ipt.strip()[1]
     except:
         return ipt
     while ipt.strip()[0]=='/' and ipt.strip()[1]=='/':#指令识别
@@ -377,7 +377,6 @@ def getbooks(keyWord):
 
 def initialiseSettings():#初始化全局变量
     singleChapterOutPut=False#单章输出
-    supportWebsttesNum=2#支持的网站数
     enabledWebsite[0]=True#xsbiquge.com
     enabledWebsite[1]=True#booktxt.net
 
@@ -395,34 +394,40 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
     searchtezheng=[]
     searchIntroduce=[]
     searchAuther=[]
+    searchsite=[]
+    searchingsite=0
     for websiteNum in range(supportWebsitesNum):#遍历可用的网站
         if enabledWebsite[websiteNum]:
             if websiteNum==0:#xsbiquge.com
+                searchingsite=0
                 (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
             elif websiteNum==1:#booktxt.net
+                searchingsite=1
                 (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=padingdianSearchPage(ipt)
             if len(searchBookNames)==0:#如果是第一次数据则直接赋值
                 searchBookNames=searchBookNames0
                 searchtezheng=searchtezheng0
                 searchIntroduce=searchIntroduce0
                 searchAuther=searchAuther0
+                searchsite=[searchingsite]*len(searchBookNames)
             else:#二次及以后后需要去重
                 for i in range(len(searchBookNames0)):#在搜索结果与原有结果之间遍历比对
                     for ii in range(len(searchBookNames)):
                         if searchBookNames0[i]==searchBookNames0[ii]:#出现重复书名则跳过
                             break
-                        searchBookNames.append(searchBookNames0[i])#反之则加入至末尾并进行下一个    $这里感觉上要去掉一个缩进，但是不去掉却没问题，去掉就有问题
+                        searchBookNames.append(searchBookNames0[i])#反之则加入至末尾并进行下一个    #这里感觉上要去掉一个缩进，但是不去掉却没问题，去掉就有问题
                         searchtezheng.append(searchtezheng0[i])
                         searchIntroduce.append(searchIntroduce0[i])
                         searchAuther.append(searchAuther0[i])
+                        searchsite.append(searchingsite)
                         break#加入后break掉ii的for
-    return searchBookNames,searchtezheng,searchIntroduce,searchAuther
+    return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
 singleChapterOutPut=False
 supportWebsitesNum=2
 enabledWebsite=[True]*2
 initialiseSettings()
-getBookSearchingResult('异常')
+(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult('异常')
 while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
