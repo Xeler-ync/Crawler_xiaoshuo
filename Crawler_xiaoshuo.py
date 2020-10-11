@@ -14,12 +14,12 @@ def selectBook(bookNames,tezheng,introduce,auther):
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
-        if '-ls' or '-list' in ipt:#输出结果                            #参数识别
+        if '-ls' in ipt or '-list' in ipt:#输出结果                            #参数识别
             for i in range(len(bookNames)):
                print(str(i)+' '+bookNames[i])
-        elif '-bk' or '-back' in ipt:#返回搜索
+        elif '-bk' in ipt or '-back' in ipt:#返回搜索
             return
-        elif 'help' or '-h' or '-?' in ipt:#输出可用指令
+        elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
             print('ls\n')
             print('List the title of the book\n')
             print('bk\n')
@@ -28,7 +28,7 @@ def selectBook(bookNames,tezheng,introduce,auther):
             print('Show the details of the book\n')
             print('pa <num>\n')
             print('Crawling book\n')
-        elif 'dt' or '-detail' in ipt:#输出书本细节
+        elif 'dt' in ipt or '-detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
                 print('Index out of range')
                 if '-d' in ipt:#进入书本主页爬取并输出细节
@@ -41,8 +41,12 @@ def selectBook(bookNames,tezheng,introduce,auther):
                     print('Auther: '+auther[num])
                     print(introduce[num])
         elif 'pa' in ipt:#爬书
-            (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-            paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+            if searchsite[int(num[0])]==0:
+                (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
+                paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+            elif searchsite[int(num[0])]==1:
+                (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
+                padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
             return
 
 def paxsbqgSearchPage(keyword):
@@ -52,8 +56,8 @@ def paxsbqgSearchPage(keyword):
     searchtezheng=re.findall('<a cpos="title" href="https://www.xsbiquge.com/(.*?)/"',searchHtmlResult,re.S)#正则抓取网址
     searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
     searchAuther=re.findall('<span>\r\n                            (.*?)\r\n                        </span>',searchHtmlResult,re.S)#正则抓取作者
-    for i in range(len(searchtezheng)):#遍历输出结果
-        print(str(i)+' '+searchBookNames[i])
+    #for i in range(len(searchtezheng)):#遍历输出结果
+    #    print(str(i)+' '+searchBookNames[i])
     print("Note: due to unknown reasons, we can't get all the results of xsbiquge.com's search interface")
     return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
@@ -163,8 +167,8 @@ def padingdianSearchPage(keyword):#未完成
     for i in range(len(searchBookNames)):#处理特征以使之能被直接与URL组合
         searchIntroduce[i]=''
     searchAuther=re.findall('<span class="s4">(.[^<>]+)</span>',searchHtmlResult,re.S)#正则抓取作者
-    for i in range(len(searchtezheng)):#遍历输出结果
-        print(str(i)+' '+searchBookNames[i])
+    #for i in range(len(searchtezheng)):#遍历输出结果
+    #    print(str(i)+' '+searchBookNames[i])
     print("Note: booktxt.net will not display a introduction to each book on the search page")
     return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
@@ -427,10 +431,11 @@ singleChapterOutPut=False
 supportWebsitesNum=2
 enabledWebsite=[True]*2
 initialiseSettings()
-(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult('异常')
+#(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult('异常')
 while True:
     (keyWord)=getKeyWord()
-    (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
+    (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
+    #(searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
 #www.iqishu.la
