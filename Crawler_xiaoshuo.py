@@ -5,6 +5,11 @@ import datetime
 import time
 import sys
 
+singleChapterOutPut=False
+supportWebsitesNum=2
+enabledWebsite=[True]*supportWebsitesNum
+initialiseSettings()
+
 def writejianjie(contents,filePath):
     with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
         ff.write(contents)
@@ -193,7 +198,7 @@ def padingdianzhuye(xiaoshuohao):#booktxt.net
     garbage=re.findall('<!doctype html>.*<dt>《'+bookname[0]+'》正文',html,re.S)#顶点在正文前面有几个最新章节的链接，去除正文前面所有的内容
     html=html.replace(garbage[0],'')
     html_str=re.findall('<dd><a href ="[0-9]+.html">.*?</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
-    return(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
+    return(url,html_str,bookname,bookauther,bookintroduction)
 
 def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
     print(bookname[0])
@@ -440,10 +445,6 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         break#加入后break掉ii的for
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
-singleChapterOutPut=False
-supportWebsitesNum=2
-enabledWebsite=[True]*2
-initialiseSettings()
 #(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult('异常')
 while True:
     (keyWord)=getKeyWord()
