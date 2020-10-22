@@ -8,7 +8,6 @@ import sys
 singleChapterOutPut=False
 supportWebsitesNum=2
 enabledWebsite=[True]*supportWebsitesNum
-initialiseSettings()
 
 def writejianjie(contents,filePath):
     with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
@@ -53,6 +52,7 @@ def selectBook(bookNames,tezheng,introduce,auther):
         elif 'scopt' in ipt:#单章输出的选择
             ipt=ipt.replace('scopt','')
             if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
+                global singleChapterOutPut
                 singleChapterOutPut=True
             elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
                 singleChapterOutPut=False
@@ -396,6 +396,7 @@ def getbooks(keyWord):
     keyWord=keyWord
 
 def initialiseSettings():#初始化全局变量
+    global singleChapterOutPut
     singleChapterOutPut=False#单章输出
     enabledWebsite[0]=True#xsbiquge.com
     enabledWebsite[1]=True#booktxt.net
@@ -407,6 +408,7 @@ def changeSettings(ipt):#搜索时可配置的设置
     elif 'scopt' in ipt:#单章输出的选择
         ipt=ipt.replace('scopt','')
         if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
+            global singleChapterOutPut
             singleChapterOutPut=True
         elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
             singleChapterOutPut=False
@@ -445,6 +447,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         break#加入后break掉ii的for
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
+initialiseSettings()
 #(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult('异常')
 while True:
     (keyWord)=getKeyWord()
