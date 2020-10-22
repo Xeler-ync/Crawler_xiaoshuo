@@ -17,8 +17,8 @@ def selectBook(bookNames,tezheng,introduce,auther):
         if 'ls' in ipt or 'list' in ipt:#输出结果                            #参数识别
             for i in range(len(bookNames)):
                print(str(i)+' '+bookNames[i])
-        #elif 'bk' in ipt or 'back' in ipt:#返回搜索
-            #return
+        elif 'bk' in ipt or 'back' in ipt:#返回搜索
+            return
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
             print('ls\n')
             print('List the title of the book\n')
@@ -42,9 +42,9 @@ def selectBook(bookNames,tezheng,introduce,auther):
                 print('Auther: '+zhuyebookauther[0])
                 print(zhuyebookintroduction[0])
             else:#直接输出细节
-                print('Title: 《'+bookNames[num]+'》')
-                print('Auther: '+auther[num])
-                print(introduce[num])
+                print('Title: 《'+bookNames[int(num[0])]+'》')
+                print('Auther: '+auther[int(num[0])])
+                print(introduce[int(num[0])])
         elif 'scopt' in ipt:#单章输出的选择
             ipt=ipt.replace('scopt','')
             if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
