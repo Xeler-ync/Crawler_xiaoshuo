@@ -57,17 +57,12 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
             elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
                 singleChapterOutPut=False
         elif 'pa' in ipt:#爬书
-<<<<<<< HEAD
             if searchsite[int(num[0])]==0:#xsbiquge.com
                 (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
                 paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
             elif searchsite[int(num[0])]==1:#booktxt.net
                 (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
                 padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-=======
-            (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-            paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])],False)
->>>>>>> master
             return
 
 def paxsbqgSearchPage(keyword):
@@ -77,13 +72,6 @@ def paxsbqgSearchPage(keyword):
     searchtezheng=re.findall('<a cpos="title" href="https://www.xsbiquge.com/(.*?)/"',searchHtmlResult,re.S)#正则抓取网址
     searchIntroduce=re.findall('<p class="result-game-item-desc">(.*?)</p>\r\n',searchHtmlResult,re.S)#正则抓取简介
     searchAuther=re.findall('<span>\r\n                            (.*?)\r\n                        </span>',searchHtmlResult,re.S)#正则抓取作者
-<<<<<<< HEAD
-    #for i in range(len(searchtezheng)):#遍历输出结果
-    #    print(str(i)+' '+searchBookNames[i])
-=======
-    for i in range(len(searchtezheng)):#遍历输出结果
-        print(str(i)+' '+searchBookNames[i])
->>>>>>> master
     print("Note: due to unknown reasons, we can't get all the results of xsbiquge.com's search interface")
     return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
 
@@ -362,9 +350,11 @@ while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
     repetition=0
+    printToSource={}
     for i in range(len(searchBookNames)):#遍历输出结果
         if i!=0 and searchBookNames[i]==searchBookNames[i-1]:#如果和存在重复则不输出
             repetition+=1
         else:
             print(str(i-repetition)+' '+searchBookNames[i])
+            printToSource[i-repetition]=i
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
