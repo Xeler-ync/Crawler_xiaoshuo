@@ -14,7 +14,7 @@ def writejianjie(contents,filePath):
         ff.write(contents)
     return
 
-def selectBook(bookNames,tezheng,introduce,auther):
+def selectBook(bookNames,tezheng,introduce,auther,searchsite):
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
@@ -222,7 +222,7 @@ def padingdianTraversalChapter(url,html_str,bookname,bookauther,bookintroduction
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(html_str)):#遍历章节
         ii=i
-        success=paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
+        success=padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
         else:
@@ -422,29 +422,33 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
     searchingsite=0
     for websiteNum in range(supportWebsitesNum):#遍历可用的网站
         if enabledWebsite[websiteNum]:
-            if websiteNum==0:#xsbiquge.com
+            if websiteNum==0:#xsbiquge.comx
                 searchingsite=0
-                (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=paxsbqgSearchPage(ipt)
+                (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=paxsbqgSearchPage(ipt)
             elif websiteNum==1:#booktxt.net
                 searchingsite=1
-                (searchBookNames0,searchtezheng0,searchIntroduce0,searchAuther0)=padingdianSearchPage(ipt)
+                (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=padingdianSearchPage(ipt)
             if len(searchBookNames)==0:#如果是第一次数据则直接赋值
-                searchBookNames=searchBookNames0
-                searchtezheng=searchtezheng0
-                searchIntroduce=searchIntroduce0
-                searchAuther=searchAuther0
+                searchBookNames=searchBookNamesNew
+                searchtezheng=searchtezhengNew
+                searchIntroduce=searchIntroduceNew
+                searchAuther=searchAutherNew
                 searchsite=[searchingsite]*len(searchBookNames)
-            else:#二次及以后后需要去重
-                for i in range(len(searchBookNames0)):#在搜索结果与原有结果之间遍历比对
-                    for ii in range(len(searchBookNames)):
-                        if searchBookNames0[i]==searchBookNames0[ii]:#出现重复书名则跳过
-                            break
-                        searchBookNames.append(searchBookNames0[i])#反之则加入至末尾并进行下一个    #这里感觉上要去掉一个缩进，但是不去掉却没问题，去掉就有问题
-                        searchtezheng.append(searchtezheng0[i])
-                        searchIntroduce.append(searchIntroduce0[i])
-                        searchAuther.append(searchAuther0[i])
+            else:#二次及以后后需要注意重复书名
+                for indexOfNew in range(len(searchBookNamesNew)):#在搜索结果与原有结果之间遍历比对
+                    if searchBookNames.count(searchBookNamesNew[indexOfNew])!=0:#出现重复书名则作为为其他来源
+                        addingIndex=searchBookNames.index(searchBookNamesNew[indexOfNew])
+                        searchBookNames.insert(addingIndex,searchBookNamesNew[indexOfNew])#加入至对应的书名index后面
+                        searchtezheng.insert(addingIndex,searchtezhengNew[indexOfNew])
+                        searchIntroduce.insert(addingIndex,searchIntroduceNew[indexOfNew])
+                        searchAuther.insert(addingIndex,searchAutherNew[indexOfNew])
+                        searchsite.insert(addingIndex,searchingsite)
+                    else:
+                        searchBookNames.append(searchBookNamesNew[indexOfNew])#反之则加入至末尾并进行下一个
+                        searchtezheng.append(searchtezhengNew[indexOfNew])
+                        searchIntroduce.append(searchIntroduceNew[indexOfNew])
+                        searchAuther.append(searchAutherNew[indexOfNew])
                         searchsite.append(searchingsite)
-                        break#加入后break掉ii的for
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
 initialiseSettings()
@@ -452,10 +456,11 @@ initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
+    
     for i in range(len(searchBookNames)):#遍历输出结果
         print(str(i)+' '+searchBookNames[i])
     #(searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
-    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
+    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
 
 #www.iqishu.la
 #http://www.iqishu.la/search.html?searchkey=q
