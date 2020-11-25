@@ -456,9 +456,12 @@ initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
-    
+    repetition=0
     for i in range(len(searchBookNames)):#遍历输出结果
-        print(str(i)+' '+searchBookNames[i])
+        if i!=0 and searchBookNames[i]==searchBookNames[i-1]:#如果和存在重复则不输出
+            repetition+=1
+        else:
+            print(str(i-repetition)+' '+searchBookNames[i])
     #(searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
 
