@@ -286,9 +286,6 @@ def getKeyWord():
     ipt=input('Please enter KeyWords: ')
     return ipt
 
-def getbooks(keyWord):
-    keyWord=keyWord
-
 def initialiseSettings():#初始化全局变量
     global singleChapterOutPut
     singleChapterOutPut=False#单章输出
