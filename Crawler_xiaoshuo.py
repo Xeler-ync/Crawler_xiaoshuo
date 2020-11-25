@@ -331,7 +331,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
             else:#二次及以后后需要注意重复书名
                 for indexOfNew in range(len(searchBookNamesNew)):#在搜索结果与原有结果之间遍历比对
                     if searchBookNames.count(searchBookNamesNew[indexOfNew])!=0:#出现重复书名则跳过
-                        break
+                        continue
                     else:
                         searchBookNames.append(searchBookNamesNew[indexOfNew])#反之则加入至末尾并进行下一个
                         searchtezheng.append(searchtezhengNew[indexOfNew])
