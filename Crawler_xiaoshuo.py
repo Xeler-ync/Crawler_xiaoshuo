@@ -18,15 +18,13 @@ def selectBook(bookNames,tezheng,introduce,auther):
         elif 'bk' in ipt or 'back' in ipt:#返回搜索
             return
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
-            print('ls\n')
+            print('ls')
             print('List the title of the book\n')
-            print('bk\n')
+            print('bk')
             print('Return to search\n')
-            print('dt <num>\n')
+            print('dt <num>')
             print('Show the details of the book\n')
-            print('helps:')
-            print('-scopt t/f\nTo enable/disable single chapter output.')
-            print('pa <num>\n')
+            print('pa <num>')
             print('Crawling book\n')
         elif 'dt' in ipt or 'detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
@@ -40,13 +38,6 @@ def selectBook(bookNames,tezheng,introduce,auther):
                 print('Title: 《'+bookNames[int(num[0])]+'》')
                 print('Auther: '+auther[int(num[0])])
                 print(introduce[int(num[0])])
-        elif 'scopt' in ipt:#单章输出的选择
-            ipt=ipt.replace('scopt','')
-            if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
-                global singleChapterOutPut
-                singleChapterOutPut=True
-            elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
-                singleChapterOutPut=False
         elif 'pa' in ipt:#爬书
             (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
             paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
@@ -155,7 +146,6 @@ def getKeyWord():
 while True:
     (keyWord)=getKeyWord()
     (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
-    repetition=0
     for i in range(len(searchBookNames)):#遍历输出结果
-        print(str(i-repetition)+' '+searchBookNames[i])
+        print(str(i)+' '+searchBookNames[i])
     selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
