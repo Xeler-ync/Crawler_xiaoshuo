@@ -24,15 +24,15 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
         elif 'bk' in ipt or 'back' in ipt:#返回搜索
             return
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
-            print('ls\n')
+            print('ls')
             print('List the title of the book\n')
-            print('bk\n')
+            print('bk')
             print('Return to search\n')
-            print('dt <num>\n')
+            print('dt <num>')
             print('Show the details of the book\n')
-            print('helps:')
-            print('-scopt t/f\nTo enable/disable single chapter output.')
-            print('pa <num>\n')
+            print('-scopt t/f')
+            print('To enable/disable single chapter output.\n')
+            print('pa <num>')
             print('Crawling book\n')
         elif 'dt' in ipt or 'detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
@@ -348,13 +348,16 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
 initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
-    (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
-    repetition=0
-    printToSource={}
-    for i in range(len(searchBookNames)):#遍历输出结果
-        if i!=0 and searchBookNames[i]==searchBookNames[i-1]:#如果和存在重复则不输出
-            repetition+=1
-        else:
-            print(str(i-repetition)+' '+searchBookNames[i])
-            printToSource[i-repetition]=i
-    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
+    if '-' in keyWord:
+        changeSettings(keyWord)
+    else:
+        (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
+        repetition=0
+        printToSource={}
+        for i in range(len(searchBookNames)):#遍历输出结果
+            if i!=0 and searchBookNames[i]==searchBookNames[i-1]:#如果和存在重复则不输出
+                repetition+=1
+            else:
+                print(str(i-repetition)+' '+searchBookNames[i])
+                printToSource[i-repetition]=i
+        selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
