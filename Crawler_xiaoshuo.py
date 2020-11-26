@@ -296,9 +296,9 @@ def changeSettings(ipt):#搜索时可配置的设置
     if '-h'in ipt or '-help'in ipt or '-?' in ipt:
         print('helps:')
         print('-scopt t/f\nTo enable/disable single chapter output.')
-    elif 'scopt' in ipt:#单章输出的选择
+    elif '-scopt' in ipt:#单章输出的选择
         ipt=ipt.replace('scopt','')
-        if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
+        if ' t' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
             global singleChapterOutPut
             singleChapterOutPut=True
         elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
@@ -319,7 +319,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
             elif websiteNum==1:#booktxt.net
                 searchingsite=1
                 (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=padingdianSearchPage(ipt)
-            if len(searchBookNames)==0:#如果是第一次数据则直接赋值
+            if len(searchaookNames)==0:#如果是第一次数据则直接赋值
                 searchBookNames=searchBookNamesNew
                 searchtezheng=searchtezhengNew
                 searchIntroduce=searchIntroduceNew
@@ -340,8 +340,10 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
 initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
-    (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
-    repetition=0
-    for i in range(len(searchBookNames)):#遍历输出结果
-        print(str(i-repetition)+' '+searchBookNames[i])
-    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
+    if '-' in keyWord:
+        changeSettings(keyWord)
+    else:
+        (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
+        for i in range(len(searchBookNames)):#遍历输出结果
+            print(str(i)+' '+searchBookNames[i])
+        selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
