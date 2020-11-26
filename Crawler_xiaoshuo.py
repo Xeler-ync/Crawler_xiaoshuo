@@ -40,7 +40,7 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
             if '-d' in ipt:#进入书本主页爬取并输出细节
                 if searchsite[int(num[0])]==0:#xsbiquge.com
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-                elif searchsite[int(num[0])]==1:#booktxt.netm
+                elif searchsite[int(num[0])]==1:#booktxt.net
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyebookauther[0])
