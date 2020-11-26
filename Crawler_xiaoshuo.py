@@ -5,16 +5,12 @@ import datetime
 import time
 import sys
 
-singleChapterOutPut=False
-supportWebsitesNum=2
-enabledWebsite=[True]*supportWebsitesNum
-
 def writejianjie(contents,filePath):
     with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
         ff.write(contents)
     return
 
-def selectBook(bookNames,tezheng,introduce,auther,searchsite):
+def selectBook(bookNames,tezheng,introduce,auther):
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
@@ -24,24 +20,22 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
         elif 'bk' in ipt or 'back' in ipt:#返回搜索
             return
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
-            print('ls\n')
+            print('ls')
             print('List the title of the book\n')
-            print('bk\n')
+            print('bk')
             print('Return to search\n')
-            print('dt <num>\n')
+            print('dt <num>')
             print('Show the details of the book\n')
-            print('helps:')
-            print('-scopt t/f\nTo enable/disable single chapter output.')
-            print('pa <num>\n')
+            print('pa <num>')
             print('Crawling book\n')
         elif 'dt' in ipt or 'detail' in ipt:#输出书本细节
             if int(num[0])>len(tezheng):
                 print('Index out of range')
             if '-d' in ipt:#进入书本主页爬取并输出细节
-                if searchsite[int(num[0])]==0:#xsbiquge.com
-                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-                elif searchsite[int(num[0])]==1:#booktxt.netm
-                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
+                #xsbiquge.com
+                (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
+                #booktxt.net
+                #(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyebookauther[0])
                 print(zhuyebookintroduction[0])
@@ -49,21 +43,15 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
                 print('Title: 《'+bookNames[int(num[0])]+'》')
                 print('Auther: '+auther[int(num[0])])
                 print(introduce[int(num[0])])
-        elif 'scopt' in ipt:#单章输出的选择
-            ipt=ipt.replace('scopt','')
-            if 't' in ipt or 'on' in ipt or '1' in ipt:#单章输出的选择
-                global singleChapterOutPut
-                singleChapterOutPut=True
-            elif 'f' in ipt or 'off' in ipt or '0' in ipt:#单章输出的选择
-                singleChapterOutPut=False
         elif 'pa' in ipt:#爬书
-            if searchsite[int(num[0])]==0:#xsbiquge.com
-                (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-                paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-            elif searchsite[int(num[0])]==1:#booktxt.net
-                (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
-                padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+            #xsbiquge.com
+            (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
+            paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+            #booktxt.net
+            #(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
+            #padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
             return
+
 
 def paxsbqgSearchPage(keyword):
     searchHtmlResult=requests.get('https://www.xsbiquge.com/search.php?keyword='+keyword).content.decode('utf-8')#请求搜索数据
@@ -161,9 +149,8 @@ def paxsbqgChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao
         text[0]=text[0].replace('&nbsp;','')#去除无用html标签
         text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
         text[0]=text[0].replace('<br />','\n')#处理换行
-        if singleChapterOutPut==True:#是否输出单章
-            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
-                f.write(str(i)+' '+text[0])#写入正文与节号至分文件
+        with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+            f.write(str(i)+' '+text[0])#写入正文与节号至分文件
         writejianjie(str(i)+' '+chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名与节号至总文件
         writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
         print('\r'+'Completed: '+str(i)+'/'+str(len(html_str)-1), end='', flush=True)
@@ -275,9 +262,8 @@ def padingdianChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuo
         text[0]=text[0].replace('&nbsp;','')#去除无用html标签
         text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
         text[0]=text[0].replace('<br />','').replace('\r\r','\r')#处理换行
-        if singleChapterOutPut==True:#是否输出单章
-            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
-                f.write(str(i)+' '+text[0])#写入正文与节号至分文件
+        with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[0]+'.txt','w',encoding='utf-8') as f:#创建f
+            f.write(str(i)+' '+text[0])#写入正文与节号至分文件
         writejianjie(chapterName[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名至总文件
         writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
         return True
@@ -286,44 +272,14 @@ def getKeyWord():
     ipt=input('Please enter KeyWords: ')
     return ipt
 
-def getBookSearchingResult(ipt):#获取各个网址的搜索结果
-    searchBookNames=[]#初始化变量
-    searchtezheng=[]
-    searchIntroduce=[]
-    searchAuther=[]
-    searchsite=[]
-    searchingsite=0
-    for websiteNum in range(supportWebsitesNum):#遍历可用的网站
-        if enabledWebsite[websiteNum]:
-            if websiteNum==0:#xsbiquge.comx
-                searchingsite=0
-                (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=paxsbqgSearchPage(ipt)
-            elif websiteNum==1:#booktxt.net
-                searchingsite=1
-                (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=padingdianSearchPage(ipt)
-            if len(searchBookNames)==0:#如果是第一次数据则直接赋值
-                searchBookNames=searchBookNamesNew
-                searchtezheng=searchtezhengNew
-                searchIntroduce=searchIntroduceNew
-                searchAuther=searchAutherNew
-                searchsite=[searchingsite]*len(searchBookNames)
-            else:#二次及以后后需要注意重复书名
-                for indexOfNew in range(len(searchBookNamesNew)):#在搜索结果与原有结果之间遍历比对
-                    if searchBookNames.count(searchBookNamesNew[indexOfNew])!=0:#出现重复书名则跳过
-                        continue
-                    else:
-                        searchBookNames.append(searchBookNamesNew[indexOfNew])#反之则加入至末尾并进行下一个
-                        searchtezheng.append(searchtezhengNew[indexOfNew])
-                        searchIntroduce.append(searchIntroduceNew[indexOfNew])
-                        searchAuther.append(searchAutherNew[indexOfNew])
-                        searchsite.append(searchingsite)
-    return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
-
-initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
-    (searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)=getBookSearchingResult(keyWord)
-    repetition=0
+    #xsbiquge.com
+    (searchBookNames,searchtezheng,searchIntroduce,searchAuther)=paxsbqgSearchPage(keyWord)
+    #booktxt.net
+    #(searchBookNames,searchtezheng,searchIntroduce,searchAuther)=padingdianSearchPage(keyWord)
     for i in range(len(searchBookNames)):#遍历输出结果
-        print(str(i-repetition)+' '+searchBookNames[i])
-    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite)
+        print(str(i)+' '+searchBookNames[i])
+    selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther)
+
+#如果想要切换网站，将对应网站注释下的代码启用并注释掉原先启用的对应代码即可
