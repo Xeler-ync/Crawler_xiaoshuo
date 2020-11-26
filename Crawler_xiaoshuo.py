@@ -319,7 +319,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
             elif websiteNum==1:#booktxt.net
                 searchingsite=1
                 (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=padingdianSearchPage(ipt)
-            if len(searchaookNames)==0:#如果是第一次数据则直接赋值
+            if len(searchBookNames)==0:#如果是第一次数据则直接赋值
                 searchBookNames=searchBookNamesNew
                 searchtezheng=searchtezhengNew
                 searchIntroduce=searchIntroduceNew
