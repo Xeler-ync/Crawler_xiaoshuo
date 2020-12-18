@@ -386,6 +386,28 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         searchsite.append(searchingsite)
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
+def chapterTraverse(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
+    print(bookname[0])
+    print(str(len(html_str))+' in total')
+    try:
+        os.mkdir(bookname[0])#以书名创建文件夹
+        print('Create folder: '+bookname[0])
+    except:
+        print('Folder with the same name: "'+bookname[0]+'" already exists')
+    writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')  #写入书籍相关信息至报告文件
+    writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
+    writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
+    writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
+    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
+        f.write('')
+    writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
+    writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+    writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+    writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
+    startTime=datetime.datetime.now()
+    print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
+    errorChapter=[]#用于记录出错章节名
+
 initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
