@@ -15,20 +15,6 @@ def writejianjie(contents,filePath):
         ff.write(contents)
     return
 
-def singleBookChapterCrawl(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng):#未完成
-    if searchsite[realIndex]==0:#xsbiquge.com
-        paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
-    elif searchsite[realIndex]==1:#booktxt.net
-        padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
-    return
-
-def singleBookzhuyeCrawl(tezheng,searchsite):
-    if searchsite==0:#xsbiquge.com
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng)
-    elif searchsite==1:#booktxt.net
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
-    return(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)
-
 def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
     while True:
         ipt=input().strip().lower()#获取指令
@@ -369,6 +355,20 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         searchAuther.append(searchAutherNew[indexOfNew])
                         searchsite.append(searchingsite)
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
+
+def singleBookChapterCrawl(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng):#未完成
+    if searchsite[realIndex]==0:#xsbiquge.com
+        paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
+    elif searchsite[realIndex]==1:#booktxt.net
+        padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
+    return
+
+def singleBookzhuyeCrawl(tezheng,searchsite):
+    if searchsite==0:#xsbiquge.com
+        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng)
+    elif searchsite==1:#booktxt.net
+        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
+    return(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)
 
 def getzhuye(tezheng,sitenum):
     if sitenum==0:
