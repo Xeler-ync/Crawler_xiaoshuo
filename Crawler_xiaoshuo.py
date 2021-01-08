@@ -8,12 +8,25 @@ import sys
 singleChapterOutPut=False
 supportWebsitesNum=2
 enabledWebsite=[True]*supportWebsitesNum
-workingName=[]#用于分配工作时的缓存文件名
 
 def writejianjie(contents,filePath):
     with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
         ff.write(contents)
     return
+
+def singleBookChapterCrawl(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng,realIndex):#未完成
+    if searchsite[realIndex]==0:#xsbiquge.com
+        paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
+    elif searchsite[realIndex]==1:#booktxt.net
+        padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
+    return
+
+def singleBookzhuyeCrawl(tezheng,searchsite):
+    if searchsite==0:#xsbiquge.com
+        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng)
+    elif searchsite==1:#booktxt.net
+        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng)
+    return(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)
 
 def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
     while True:
@@ -63,12 +76,11 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
                 singleChapterOutPut=False
         elif 'pa' in ipt:#爬书
             realIndex=printToSource[int(num[0])]#将输出的序号对应到真实的列表index
-            mutiSource=[]
+            mutiSource=[[0 for i in range(3)] for j in range(3)]
             for i in range(len(bookNames)):#识别可能的多个来源
-                if bookNames[i]==bookNames[realIndex]
+                if bookNames[i]==bookNames[realIndex]:
                     mutiSource.append(realIndex)
-            (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=singleBookzhuyeCrawl(tezheng[realIndex],searchsite[realIndex])
-
+            (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=singleBookzhuyeCrawl(tezheng[realIndex],searchsite[realIndex],mutiSource)
 
 def paxsbqgSearchPage(keyword):
     searchHtmlResult=requests.get('https://www.xsbiquge.com/search.php?keyword='+keyword).content.decode('utf-8')#请求搜索数据
@@ -377,7 +389,10 @@ def getzhuye(tezheng,sitenum):
         (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng)
     return zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction
 
-def chapterTraverse(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao)
+def getSingleChapter(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao,siteid):
+    pass
+
+def chapterTraverse(url,html_str,bookname,bookauther,bookintroduction,xiaoshuohao):
     print(bookname[0])
     print(str(len(html_str))+' in total')
     try:
