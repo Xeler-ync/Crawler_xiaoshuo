@@ -21,13 +21,6 @@ def singleBookChapterCrawl(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,
         padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
     return
 
-def singleBookzhuyeCrawl(tezheng,searchsite):
-    if searchsite==0:#xsbiquge.com
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng)
-    elif searchsite==1:#booktxt.net
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng)
-    return(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)
-
 def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
     while True:
         ipt=input().strip().lower()#获取指令
@@ -60,6 +53,8 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[realIndex])
                 elif searchsite[realIndex]==1:#booktxt.net
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
+                del zhuyeurl#删掉变量省着报错
+                del zhuyehtml_str
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyebookauther[0])
                 print(zhuyebookintroduction[0])
@@ -368,18 +363,11 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         searchsite.append(searchingsite)
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchsite
 
-def singleBookChapterCrawl(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng):#未完成
-    if searchsite[realIndex]==0:#xsbiquge.com
-        paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
-    elif searchsite[realIndex]==1:#booktxt.net
-        padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[realIndex])
-    return
-
-def singleBookzhuyeCrawl(tezheng,searchsite):
+def singleBookzhuyeCrawl(tezheng,searchsite,mutiSource):
     if searchsite==0:#xsbiquge.com
         (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng)
     elif searchsite==1:#booktxt.net
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
+        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng)
     return(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)
 
 def getzhuye(tezheng,sitenum):
@@ -412,15 +400,17 @@ def chapterTraverse(url,html_str,bookname,bookauther,bookintroduction,xiaoshuoha
     writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
     startTime=datetime.datetime.now()
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
-    errorChapter=[]#用于记录出错章节名
+    #errorChapter=[]#用于记录出错章节名
+
     #以下是v1.4的selectBook()中的爬书本
-    if searchsite[int(num[0])]==0:#xsbiquge.com
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
-        paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-    elif searchsite[int(num[0])]==1:#booktxt.net
-        (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
-        padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-    return
+
+    #if searchsite[int(num[0])]==0:#xsbiquge.com
+    #    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[int(num[0])])
+    #    paxsbqgTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+    #elif searchsite[int(num[0])]==1:#booktxt.net
+    #    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
+    #    padingdianTraversalChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
+    #return
 
 initialiseSettings()
 while True:
