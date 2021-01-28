@@ -295,7 +295,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
 def singleBookCrawl(booktezhengList,searchSiteList):
     mainSite=0
     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)=singleBookzhuyeCrawl(booktezhengList[mainSite],searchSiteList[mainSite])
-    bookInformationWrite(zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)
+    bookInformationWrite(len(zhuyehtml_str),zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)
     startTime=datetime.datetime.now()
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for chapterIndex in range(len(zhuyehtml_str)):#遍历章节
@@ -304,7 +304,7 @@ def singleBookCrawl(booktezhengList,searchSiteList):
             chapterContent=singleBookChapterCrawl(zhuyeurl,zhuyehtml_str[chapterIndex],zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction,booktezhengList[workingSite],workingSite)
             if chapterContent==True:#如果爬取成功
                 print('\r'+'Completed: '+str(i)+'/'+str(len(zhuyehtml_str)-1), end='', flush=True)
-                chapterHtmlHandle(chapterContent,workingSite)
+                chapterContextHandle(chapterContent)
                 break#继续下一章
         else:#如果全部不成功
             chapterName=getChapterNameFromHtml(zhuyeHtml,workingSite)#正则抓取章节名
@@ -321,9 +321,9 @@ def singleBookzhuyeCrawl(tezheng,searchSite):
         (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)=padingdianzhuye(tezheng)
     return zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction
 
-def bookInformationWrite(html_str,bookName,bookAuther,bookIntroduction):
+def bookInformationWrite(chapterNum,bookName,bookAuther,bookIntroduction):
     print(bookName[0])
-    print(str(len(html_str))+' in total')
+    print(str(chapterNum)+' in total')
     try:
         os.mkdir(bookName[0])#以书名创建文件夹
         print('Create folder: '+bookName[0])
@@ -332,13 +332,13 @@ def bookInformationWrite(html_str,bookName,bookAuther,bookIntroduction):
     writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')  #写入书籍相关信息至报告文件
     writejianjie('Auther: '+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
     writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
-    writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    writejianjie('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
     with open(sys.path[0]+'\\'+bookName[0]+'\\'+bookName[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
         f.write('')
     writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
     writejianjie('Auther :'+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    writejianjie('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
     writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
-    writejianjie('Possible chapters: '+str(len(html_str))+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
     return
 
 def singleBookChapterCrawl(zhuyeurl,chapterHtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction,tezheng,realIndex,searchSite):#未完成
@@ -355,8 +355,12 @@ def getChapterNameFromHtml(bookHtml,searchSite):#报错用
         chapterName=re.findall('html">(.*?)</a></dd>',html_str[i],re.S)#正则抓取章节名
     return(chapterName)
 
-def chapterHtmlHandle(chapterHtml,searchingSite):#这里直接写入文件
-    pass
+def chapterContextHandle(chapterContext,bookName,chapterName,chapterIndex):#写入文件
+    if singleChapterOutPut==True:#是否输出单章
+        with open(os.getcwd()+'\\'+bookName+'\\'+chapterName+'.txt','w',encoding='utf-8') as f:#创建f
+            f.write(str(chapterIndex)+' '+text[0])#写入正文与节号至分文件
+    writejianjie(str(chapterIndex)+' '+chapterName+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入章节名与节号至总文件
+    writejianjie(chapterContext+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入正文至总文件
 
 def siteIdToName(searchSite):
     siteName=''
@@ -365,6 +369,7 @@ def siteIdToName(searchSite):
     elif searchSite==1:#booktxt.net
         siteName='booktxt.net'
     return siteName
+
 initialiseSettings()
 while True:
     (keyWord)=getKeyWord()
