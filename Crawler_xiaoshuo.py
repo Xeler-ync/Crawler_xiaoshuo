@@ -42,10 +42,12 @@ def selectBook(bookNames,tezheng,introduce,auther,searchSite,printToSource):
                 print('Index out of range')
             realIndex=printToSource[int(num[0])]#将输出的序号对应到真实的列表index
             if '-d' in ipt:#进入书本主页爬取并输出细节
-                if searchSite[realIndex]==0:#xsbiquge.com
-                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)=paxsbqgzhuye(tezheng[realIndex])
-                elif searchSite[realIndex]==1:#booktxt.net
-                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyeBookAuther,zhuyeBookIntroduction)=padingdianzhuye(tezheng[realIndex])
+                if searchsite[realIndex]==0:#xsbiquge.com
+                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[realIndex])
+                elif searchsite[realIndex]==1:#booktxt.net
+                    (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
+                del zhuyeurl#删掉变量省着报错
+                del zhuyehtml_str
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyeBookAuther[0])
                 print(zhuyeBookIntroduction[0])
