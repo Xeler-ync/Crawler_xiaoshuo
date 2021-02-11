@@ -48,7 +48,7 @@ pa <num> #爬书
 
 ### ver1.5
 > (2021-02-11)<s>这可是除夕呢</s>
->- 将对[xsbiquge.com][1]的爬虫转移到了[vbiquge.com][2]
+>- 将对[xsbiquge.com][0]的爬虫转移到了[vbiquge.com][2]
 >- 修改了章节名与特征的传递的方法
 
 ### ver1.4
