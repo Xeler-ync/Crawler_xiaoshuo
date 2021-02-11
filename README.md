@@ -46,6 +46,11 @@ pa <num> #爬书
 
 ## Changes
 
+### ver1.5
+> (2021-02-11)<s>这可是除夕呢</s>
+>- 将对[xsbiquge.com][1]的爬虫转移到了[vbiquge.com][2]
+>- 修改了章节名与特征的传递的方法
+
 ### ver1.4
 > (2020-11-26)
 >- 可以汇合多个网站的结果并提供爬取
@@ -70,3 +75,4 @@ pa <num> #爬书
 
 [0]: http://www.xsbiquge.com/ "笑死bqg(划掉)"
 [1]: http://www.booktxt.net/ "它还有个叫'.com'的兄弟"
+[2]: http://www.vbiquge.com/ "看起来是 xsbiquge.com 的继承者"
