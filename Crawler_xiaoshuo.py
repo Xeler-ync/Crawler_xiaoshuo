@@ -46,6 +46,8 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=paxsbqgzhuye(tezheng[realIndex])
                 elif searchsite[realIndex]==1:#booktxt.net
                     (zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[realIndex])
+                del zhuyeurl#删了省着报错
+                del zhuyehtml_str
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyebookauther[0])
                 print(zhuyebookintroduction[0])
@@ -363,8 +365,7 @@ def singleBookCrawl(booktezhengList,searchSiteList):
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     errorChapter=[]#用于记录出错章节名
     for i in range(len(zhuyehtml_str)):#遍历章节
-        ii=i
-        success=padingdianChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezhengList[workingSite])
+        success=padingdianChapter(zhuyeurl,zhuyehtml_str,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezhengList[workingSite],i)
         if success==True:
             print('\r'+'Completed: '+str(i)+'/'+str(len(zhuyehtml_str)-1), end='', flush=True)
         else:
