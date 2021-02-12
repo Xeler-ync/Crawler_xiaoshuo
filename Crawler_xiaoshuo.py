@@ -14,11 +14,7 @@ def writejianjie(contents,filePath):
         ff.write(contents)
     return
 
-<<<<<<< HEAD
-def selectBook(bookNames,tezheng,introduce,auther,searchsite,printToSource):
-=======
 def selectBook(bookNames,tezheng,introduce,auther,searchSite,printToSource):
->>>>>>> bba58a6e29cdc934a888481129d15520950de3df
     while True:
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
