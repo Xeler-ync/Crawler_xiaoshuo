@@ -344,13 +344,6 @@ def singleBookChapterCrawl(bookChapterFeature,bookname,tezheng,searchSite):#获�
         chapter=padingdianChapter(bookChapterFeature,bookname,tezheng)
     return chapter
 
-def getChapterNameFromHtml(bookHtml,searchSite):#报错用
-    if searchSite==0:#xsbiquge.com
-        chapterName=re.findall('html">(.*?)</a></dd>',bookHtml,re.S)#正则抓取章节名
-    elif searchSite==1:#booktxt.net
-        chapterName=re.findall('html">(.*?)</a></dd>',bookHtml,re.S)#正则抓取章节名
-    return(chapterName)
-
 def chapterContextHandle(chapterContext,bookName,chapterName,chapterIndex):#写入文件
     if singleChapterOutPut==True:#是否输出单章
         with open(os.getcwd()+'\\'+bookName+'\\'+chapterName+'.txt','w',encoding='utf-8') as f:#创建f
@@ -382,4 +375,4 @@ while True:
                 print(str(i-repetition)+' '+searchBookNames[i])
                 printToSource[i-repetition]=i
         (tezhengList,searchsiteList)=selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchSite,printToSource)
-        #(zhuyeurl,zhuyehtml_str,zhuyeBookName,zhuyeBookAuther,zhuyeBookIntroduction)=singleBookzhuyeCrawl(tezheng[realIndex],searchSite[realIndex],mutiSource)
+        (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyeBookName,zhuyeBookAuther,zhuyeBookIntroduction)=singleBookzhuyeCrawl(tezhengList[0],searchsiteList[0])
