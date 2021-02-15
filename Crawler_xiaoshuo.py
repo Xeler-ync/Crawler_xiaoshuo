@@ -9,9 +9,9 @@ singleChapterOutPut=False
 supportWebsitesNum=2
 enabledWebsite=[True]*supportWebsitesNum
 
-def writejianjie(contents,filePath):
-    with open(sys.path[0]+'\\'+filePath,'a',encoding='utf-8') as ff:#创建jianjie
-        ff.write(contents)
+def wrtForRltvpth(contents,filePath):#以相对路径写入
+    with open(sys.path[0]+'\\'+filePath,'a+',encoding='utf-8') as file:#创建jianjie
+        file.write(contents)
     return
 
 def selectBook(bookNames,tezheng,introduce,auther,searchSite,printToSource):
@@ -106,16 +106,16 @@ def pavbiqugeTraversalChapter(url,bookChapterFeature,bookChapterName,bookName,bo
         print('Create folder: '+bookName[0])
     except:
         print('Folder with the same name: "'+bookName[0]+'" already exists')
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入书名
-    writejianjie('Auther: '+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入作者
-    writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入简介
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入获取的章节数
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入书名
+    wrtForRltvpth('Auther: '+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入作者
+    wrtForRltvpth('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入简介
+    wrtForRltvpth('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'.txt')#写入获取的章节数
     with open(sys.path[0]+'\\'+bookName[0]+'\\'+bookName[0]+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
         f.write('')#创建总文件
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入书名至总文件
-    writejianjie('Auther :'+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入作者至总文件
-    writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入简介至总文件
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入获取的章节数至总文件
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入书名至总文件
+    wrtForRltvpth('Auther :'+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入作者至总文件
+    wrtForRltvpth('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入简介至总文件
+    wrtForRltvpth('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入获取的章节数至总文件
     startTime=datetime.datetime.now()
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(bookChapterFeature)):#遍历章节
@@ -129,7 +129,7 @@ def pavbiqugeTraversalChapter(url,bookChapterFeature,bookChapterName,bookName,bo
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(bookChapterFeature))+' seconds per chapter\n')
 
 def pavbiqugeChapter(chapterFeature,bookname,xiaoshuohao):
-    writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
+    wrtForRltvpth('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
     chapterUrl='https://www.vbiquge.com/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
     try:
         chapter=requests.get(chapterUrl).content.decode('utf-8')#请求数据
@@ -182,16 +182,16 @@ def padingdianTraversalChapter(url,bookChapterFeature,bookChapterName,bookName,b
         print('Create folder: '+bookName[0])
     except:
         print('Folder with the same name: "'+bookName[0]+'" already exists')
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')  #写入书籍相关信息至报告文件
-    writejianjie('Auther: '+bookauther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
-    writejianjie('    '+bookintroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')  #写入书籍相关信息至报告文件
+    wrtForRltvpth('Auther: '+bookauther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('    '+bookintroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
     with open(sys.path[0]+'\\'+bookName[0]+'\\'+bookName[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
         f.write('')
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
-    writejianjie('Auther :'+bookauther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
-    writejianjie('    '+bookintroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
+    wrtForRltvpth('Auther :'+bookauther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('    '+bookintroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
     startTime=datetime.datetime.now()
     print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
     for i in range(len(bookChapterFeature)):#遍历章节
@@ -205,7 +205,7 @@ def padingdianTraversalChapter(url,bookChapterFeature,bookChapterName,bookName,b
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(bookChapterFeature))+' seconds per chapter\n')
 
 def padingdianChapter(chapterFeature,bookName,xiaoshuohao):
-    writejianjie('\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入换行至总文件
+    wrtForRltvpth('\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')#写入换行至总文件
     chapterUrl='https://www.booktxt.net/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
     chapter='false'
     while True:#dingdian有时会莫名其妙无法获取，但是每一个章节必定有html内容，故使用while
@@ -301,11 +301,11 @@ def singleBookCrawl(booktezhengList,searchSiteList):
             print('Error: '+zhuyeBookChapterName[chapterIndex])
             with open(sys.path[0]+'\\'+zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt','w',encoding='utf-8') as f:#创建f
                 f.write('')#创建总文件
-            writejianjie('Error:'+str(i)+zhuyeBookChapterName[chapterIndex]+'From\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')#写入报错至总文件
+            wrtForRltvpth('Error:'+str(i)+zhuyeBookChapterName[chapterIndex]+'From\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')#写入报错至总文件
             for i in range(len(searchSiteList)):
                 errorWebsite=searchSiteList[i]
-                writejianjie('  '+errorWebsite+'\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')
-            writejianjie('\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')
+                wrtForRltvpth('  '+errorWebsite+'\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')
+            wrtForRltvpth('\n',zhuyeBookName+'\\'+zhuyeBookName+'_总'+'.txt')
     endTime=datetime.datetime.now()
     deltaTime=(endTime-startTime).seconds
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(zhuyeBookChapterFeature))+' seconds per chapter\n')
@@ -325,16 +325,16 @@ def bookInformationWrite(chapterNum,bookName,bookAuther,bookIntroduction):
         print('Create folder: '+bookName[0])
     except:
         print('Folder with the same name: "'+bookName[0]+'" already exists')
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')  #写入书籍相关信息至报告文件
-    writejianjie('Auther: '+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
-    writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
-    writejianjie('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'.txt')  #写入书籍相关信息至报告文件
+    wrtForRltvpth('Auther: '+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
+    wrtForRltvpth('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'.txt')
     with open(sys.path[0]+'\\'+bookName[0]+'\\'+bookName[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
         f.write('')
-    writejianjie('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
-    writejianjie('Auther :'+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
-    writejianjie('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
-    writejianjie('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('《'+bookName[0]+'》'+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
+    wrtForRltvpth('Auther :'+bookAuther[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('Possible chapters: '+str(chapterNum)+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
+    wrtForRltvpth('    '+bookIntroduction[0]+'\n',bookName[0]+'\\'+bookName[0]+'_总'+'.txt')
     return
 
 def singleBookChapterCrawl(bookChapterFeature,bookname,tezheng,searchSite):#获取章节
@@ -348,8 +348,8 @@ def chapterContextHandle(chapterContext,bookName,chapterName,chapterIndex):#写�
     if singleChapterOutPut==True:#是否输出单章
         with open(os.getcwd()+'\\'+bookName+'\\'+chapterName+'.txt','w',encoding='utf-8') as f:#创建f
             f.write(str(chapterIndex)+' '+chapterContext)#写入正文与节号至分文件
-    writejianjie(str(chapterIndex)+' '+chapterName+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入章节名与节号至总文件
-    writejianjie(chapterContext+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入正文至总文件
+    wrtForRltvpth(str(chapterIndex)+' '+chapterName+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入章节名与节号至总文件
+    wrtForRltvpth(chapterContext+'\n',bookName+'\\'+bookName+'_总'+'.txt')#写入正文至总文件
 
 def siteIdToName(searchSite):
     siteName=''
