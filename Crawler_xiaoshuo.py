@@ -311,7 +311,7 @@ def singleBookCrawl(booktezhengList,searchSiteList):
     print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(zhuyeBookChapterFeature))+' seconds per chapter\n')
 
 def singleBookzhuyeCrawl(tezheng,searchSite):
-    if searchSite==0:#xsbiquge.com
+    if searchSite==0:#vbiquge.com
         (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyeBookName,zhuyeBookAuther,zhuyeBookIntroduction)=pavbiqugezhuye(tezheng)
     elif searchSite==1:#booktxt.net
         (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyeBookName,zhuyeBookAuther,zhuyeBookIntroduction)=padingdianzhuye(tezheng)
@@ -353,8 +353,8 @@ def chapterContextHandle(chapterContext,bookName,chapterName,chapterIndex):#å†™å
 
 def siteIdToName(searchSite):
     siteName=''
-    if searchSite==0:#xsbiquge.com
-        siteName='xsbiquge.com'
+    if searchSite==0:#vbiquge.com
+        siteName='vbiquge.com'
     elif searchSite==1:#booktxt.net
         siteName='booktxt.net'
     return siteName
