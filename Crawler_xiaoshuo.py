@@ -123,7 +123,7 @@ def pavbiqugeTraversalChapter(url,bookChapterFeature,bookChapterName,bookname,bo
 
 def pavbiqugeChapter(url,chapterFeature,chapterName,bookname,bookauther,bookintroduction,xiaoshuohao,i):
     writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
-    chapterUrl='https://www.vbiquge.com/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
+    chapterUrl='https://www.vbiquge.com/'+xiaoshuohao+'/'+chapterFeature[i]+'.html'#拼接章节URL
     try:
         chapterName[0]=chapterName[0].replace('\\','[反斜杠]')#去除反斜杠
     except:#出错处理
