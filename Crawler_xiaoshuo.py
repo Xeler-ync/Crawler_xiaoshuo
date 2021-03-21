@@ -85,7 +85,7 @@ def pavbiqugeSearchPage(keyword):
 
 def pavbiqugezhuye(xiaoshuohao):#vbiquge.com
     url="https://www.vbiquge.com/"+xiaoshuohao+"/"
-    html=requests.get(url).content.decode('utf-8')#请求数据
+    html=requests.get(url).content.decode('utf-8','ignore')#请求数据
     #这是用于 xsbiquge.com 的代码， vbiquge.com 看起来是从她继承而来，不确定这几行代码是否有用
     #emptychapter=re.findall('<dd><a href="/'+xiaoshuohao+'/.[0-9]+?.html" class="empty">本站重要通告</a></dd>',html,re.S)#正则筛选   <dd><a href="/'+xiaoshuohao+'/.[0-9]+?.html" class="empty">本站重要通告</a></dd>
     #for i in range(len(emptychapter)):#遍历去除
@@ -264,7 +264,7 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                 searchtezheng=searchtezhengNew
                 searchIntroduce=searchIntroduceNew
                 searchAuther=searchAutherNew
-                searchSite=[searchSite]*len(searchBookNames)
+                searchSite=[websiteNum]*len(searchBookNames)
             else:#二次及以后后需要注意重复书名
                 for indexOfNew in range(len(searchBookNamesNew)):#在搜索结果与原有结果之间遍历比对
                     if searchBookNames.count(searchBookNamesNew[indexOfNew])!=0:#出现重复书名则作为为其他来源
@@ -273,13 +273,13 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
                         searchtezheng.insert(addingIndex,searchtezhengNew[indexOfNew])
                         searchIntroduce.insert(addingIndex,searchIntroduceNew[indexOfNew])
                         searchAuther.insert(addingIndex,searchAutherNew[indexOfNew])
-                        searchSite.insert(addingIndex,searchSite)
+                        searchSite.insert(addingIndex,websiteNum)
                     else:
                         searchBookNames.append(searchBookNamesNew[indexOfNew])#反之则加入至末尾并进行下一个
                         searchtezheng.append(searchtezhengNew[indexOfNew])
                         searchIntroduce.append(searchIntroduceNew[indexOfNew])
                         searchAuther.append(searchAutherNew[indexOfNew])
-                        searchSite.append(searchSite)
+                        searchSite.append(websiteNum)
     return searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchSite
 
 def singleBookCrawl(booktezhengList,searchSiteList):
