@@ -376,4 +376,6 @@ while True:
                 print(str(i-repetition)+' '+searchBookNames[i])
                 printToSource[i-repetition]=i
         (tezhengList,searchsiteList)=selectBook(searchBookNames,searchtezheng,searchIntroduce,searchAuther,searchSite,printToSource)
+        if tezhengList==[] and searchsiteList==[]:
+            continue
         (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyeBookName,zhuyeBookAuther,zhuyeBookIntroduction)=singleBookzhuyeCrawl(tezhengList[0],searchsiteList[0])
