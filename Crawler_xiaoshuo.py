@@ -19,6 +19,7 @@ def selectBook(bookNames,tezheng,introduce,auther,searchSite,printToSource):
         ipt=input().strip().lower()#获取指令
         num=re.findall('.([0-9]+)',ipt,re.S)#正则抓取数字
         if 'ls' in ipt or 'list' in ipt:#输出结果                            #参数识别
+            repetition=0
             for i in range(len(searchBookNames)):#遍历输出结果
                 if i!=0 and searchBookNames[i]==searchBookNames[i-1]:#如果和存在重复则不输出
                     repetition+=1
