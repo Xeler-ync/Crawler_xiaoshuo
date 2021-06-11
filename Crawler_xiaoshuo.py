@@ -26,7 +26,7 @@ def selectBook(bookNames,tezheng,introduce,auther,searchSite,printToSource):
                 else:
                     print(str(i-repetition)+' '+searchBookNames[i])
         elif 'bk' in ipt or 'back' in ipt:#返回搜索
-            return
+            return [], []
         elif 'help' in ipt or '-h' in ipt or '-?' in ipt:#输出可用指令
             print('ls')
             print('List the title of the book\n')
