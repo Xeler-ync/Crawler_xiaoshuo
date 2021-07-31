@@ -6,7 +6,7 @@ import time
 import sys
 
 singleChapterOutPut=False
-supportWebsitesNum=2
+supportWebsitesNum=1#增添网站时记得改这里
 enabledWebsite=[True]*supportWebsitesNum
 
 def writejianjie(contents,filePath):
@@ -40,8 +40,6 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
             if '-d' in ipt:#进入书本主页爬取并输出细节
                 if searchsite[int(num[0])]==0:#vbiquge.com
                     (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=pavbiqugezhuye(tezheng[int(num[0])])
-                elif searchsite[int(num[0])]==1:#booktxt.netm
-                    (zhuyeurl,bookChapterFeature,bookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
                 print('Title: 《'+zhuyebookname[0]+'》')
                 print('Auther: '+zhuyebookauther[0])
                 print(zhuyebookintroduction[0])
@@ -60,9 +58,6 @@ def selectBook(bookNames,tezheng,introduce,auther,searchsite):
             if searchsite[int(num[0])]==0:#vbiquge.com
                 (zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=pavbiqugezhuye(tezheng[int(num[0])])
                 pavbiqugeTraversalChapter(zhuyeurl,zhuyeBookChapterFeature,zhuyeBookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
-            elif searchsite[int(num[0])]==1:#booktxt.net
-                (zhuyeurl,bookChapterFeature,bookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction)=padingdianzhuye(tezheng[int(num[0])])
-                padingdianTraversalChapter(zhuyeurl,bookChapterFeature,bookChapterName,zhuyebookname,zhuyebookauther,zhuyebookintroduction,tezheng[int(num[0])])
             return
 
 def pavbiqugeSearchPage(keyword):
@@ -169,115 +164,6 @@ def pavbiqugeChapter(url,chapterFeature,chapterName,bookname,bookauther,bookintr
         print('\r'+'Completed: '+str(i)+'/'+str(len(chapterFeature)-1), end='', flush=True)
         return True
 
-def padingdianSearchPage(keyword):
-    keyword=keyword.encode('gbk')
-    keyword=str(keyword).replace('\\x','%').replace("b'",'').replace("'",'')
-    searchHtmlResult=requests.get('https://so.biqusoso.com/s1.php?siteid=booktxt.net&q='+str(keyword)).content.decode('utf-8')#请求搜索数据
-    searchBookNames=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/.[0-9]+" target="_blank">(.*?)</a></span>',searchHtmlResult,re.S)#正则抓取书名
-    searchtezheng=re.findall('<span class="s2"><a href="http://www.booktxt.net/book/goto/id/(.[0-9]+)" target="_blank">.*?</a></span>',searchHtmlResult,re.S)#正则抓取网址
-    for i in range (len(searchtezheng)):#处理特征以使之能被直接与URL组合
-        searchtezheng[i]=searchtezheng[i][0]+'_'+searchtezheng[i]
-    searchIntroduce=[0 for i in range(len(searchBookNames))]#为不存在的简介填充
-    for i in range(len(searchBookNames)):
-        searchIntroduce[i]=''
-    searchAuther=re.findall('<span class="s4">(.[^<>]+)</span>',searchHtmlResult,re.S)#正则抓取作者
-    print("Note: booktxt.net will not display a introduction to each book on the search page")
-    return (searchBookNames,searchtezheng,searchIntroduce,searchAuther)
-
-def padingdianzhuye(xiaoshuohao):#booktxt.net
-    url='https://www.booktxt.net/'+xiaoshuohao+'/'
-    html=requests.get(url).content.decode('gbk')#请求数据
-    bookname=re.findall('<h1>(.*?)</h1>',html,re.S)#正则抓取书名
-    bookauther=re.findall('<meta property="og:novel:author" content="(.*?)"/>',html,re.S)#正则抓取作者
-    bookintroduction=re.findall('<meta property="og:description" content="(.*?)"/>',html,re.S)#正则抓取简介
-    bookintroduction[0]=bookintroduction[0].replace(r'\r\n', "")
-    garbage=re.findall('<!doctype html>.*<dt>《'+bookname[0]+'》正文',html,re.S)#顶点在正文前面有几个最新章节的链接，去除正文前面所有的内容
-    html=html.replace(garbage[0],'')
-    bookChapterFeature=re.findall('<dd><a href ="([0-9]+).html">.*?</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
-    bookChapterName=re.findall('<dd><a href ="[0-9]+.html">(.*?)</a></dd>\r\n\t\t',html,re.S)#正则抓取章节名与URL特征
-    return(url,bookChapterFeature,bookChapterName,bookname,bookauther,bookintroduction)
-
-def padingdianTraversalChapter(url,bookChapterFeature,bookChapterName,bookname,bookauther,bookintroduction,xiaoshuohao):#未完成
-    print(bookname[0])
-    print(str(len(bookChapterFeature))+' in total')
-    try:
-        os.mkdir(bookname[0])#以书名创建文件夹
-        print('Create folder: '+bookname[0])
-    except:
-        print('Folder with the same name: "'+bookname[0]+'" already exists')
-    writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')  #写入书籍相关信息至报告文件
-    writejianjie('Auther: '+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-    writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-    with open(sys.path[0]+'\\'+bookname[0]+'\\'+bookname[0]+'_总'+'.txt','w',encoding='utf-8') as f:  #创建总文件
-        f.write('')
-    writejianjie('《'+bookname[0]+'》'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')  #写入书籍相关信息至总文件
-    writejianjie('Auther :'+bookauther[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-    writejianjie('    '+bookintroduction[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-    writejianjie('Possible chapters: '+str(len(bookChapterFeature))+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-    startTime=datetime.datetime.now()
-    print('Start getting data at '+startTime.strftime( '%H:%M:%S' ))
-    for i in range(len(bookChapterFeature)):#遍历章节
-        ii=i
-        success=padingdianChapter(url,bookChapterFeature,bookChapterName,bookname,bookauther,bookintroduction,xiaoshuohao,ii)
-        if success==True:
-            print('\r'+'Completed: '+str(i)+'/'+str(len(bookChapterFeature)-1), end='', flush=True)
-        else:
-            print('Error: '+bookChapterName[i])
-    endTime=datetime.datetime.now()
-    deltaTime=(endTime-startTime).seconds
-    print('\n'+str(deltaTime)+' seconds'+'    '+str(deltaTime/len(bookChapterFeature))+' seconds per chapter\n')
-
-def padingdianChapter(url,chapterFeature,chapterName,bookname,bookauther,bookintroduction,xiaoshuohao,i):
-    writejianjie('\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入换行至总文件
-    chapterUrl='https://www.booktxt.net/'+xiaoshuohao+'/'+chapterFeature[0]+'.html'#拼接章节URL
-    try:                                                                                                #不记得为什么要这么做了
-        chapterName[i]=chapterName[i].replace('\\','[反斜杠]')#去除反斜杠
-    except:#出错处理
-        writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')#写入出错章节
-        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-        writejianjie('Section '+str(i)+' unable to get chapter name'+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入出错章节
-        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入源网址
-        print('Error: Section'+i)
-        return False
-    else:
-        chapterName[i]=chapterName[i].replace('/','[斜杠]')#去除斜杠
-        chapterName[i]=chapterName[i].replace(':','[半角冒号]')#去除半角冒号
-        chapterName[i]=chapterName[i].replace('*','[星号]')#去除星号
-        chapterName[i]=chapterName[i].replace('?','[半角问号]')#去除半角问号
-        chapterName[i]=chapterName[i].replace('"','[半角双引号]')#去除半角双引号
-        chapterName[i]=chapterName[i].replace('<','[小于号]')#去除小于号
-        chapterName[i]=chapterName[i].replace('>','[大于号]')#去除大于号
-        chapterName[i]=chapterName[i].replace('|','[竖线]')#去除竖线
-        while True:
-            try:
-                chapter=requests.get(chapterUrl).content.decode('gbk','ignore')#请求数据，dingdian偶尔会在正常的章节出现莫名其妙的非法字符，只能忽略，但是dingdian似乎只使用gbk所以看起来不会有什么问题
-            except:
-                chapter=''
-            if chapter!='':
-                break
-    try: #如果出错意味着该章节没有内容
-        text=re.findall('<div id="content">(.*?).[0-9!-<>]?<br /><br /><script>chaptererror()',chapter,re.S)#正则抓取正文，未能解决为什么会变为tuple而不是list
-        text[0]=text[0][0]#将元组内容提出并重新为列表赋值
-    except:#输出报告
-        writejianjie('There is no content in section '+str(i)+'('+chapterName[i]+')'+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'.txt')
-        writejianjie('There is no content in section '+str(i)+'('+chapterName[i]+')''\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-        writejianjie('Source address: '+chapterUrl+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')
-        print('Error: '+chapterName[i])
-        return False
-    else:
-        text[0]=text[0].replace('\u3000\u3000\u3000\u3000','\u3000\u3000')#替换四重空格
-        text[0]=text[0].replace('&nbsp;','')#去除无用html标签
-        text[0]=text[0].replace('&amp;nbsp;','')#去除无用html标签
-        text[0]=text[0].replace('<br />','').replace('\r\r','\r')#处理换行
-        if singleChapterOutPut==True:#是否输出单章
-            with open(os.getcwd()+'\\'+bookname[0]+'\\'+chapterName[i]+'.txt','w',encoding='utf-8') as f:#创建f
-                f.write(str(i)+' '+text[0])#写入正文与节号至分文件
-        writejianjie(chapterName[i]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入章节名至总文件
-        writejianjie(text[0]+'\n',bookname[0]+'\\'+bookname[0]+'_总'+'.txt')#写入正文至总文件
-        return True
-
 def getKeyWord():
     ipt=input('Please enter KeyWords: ')
     return ipt
@@ -286,7 +172,6 @@ def initialiseSettings():#初始化全局变量
     global singleChapterOutPut
     singleChapterOutPut=False#单章输出
     enabledWebsite[0]=True#vbiquge.com
-    enabledWebsite[1]=True#booktxt.net
 
 def changeSettings(ipt):#搜索时可配置的设置
     if '-h'in ipt or '-help'in ipt or '-?' in ipt:
@@ -312,9 +197,6 @@ def getBookSearchingResult(ipt):#获取各个网址的搜索结果
             if websiteNum==0:#vbiquge.comx
                 searchingsite=0
                 (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=pavbiqugeSearchPage(ipt)
-            elif websiteNum==1:#booktxt.net
-                searchingsite=1
-                (searchBookNamesNew,searchtezhengNew,searchIntroduceNew,searchAutherNew)=padingdianSearchPage(ipt)
             if len(searchBookNames)==0:#如果是第一次数据则直接赋值
                 searchBookNames=searchBookNamesNew
                 searchtezheng=searchtezhengNew
